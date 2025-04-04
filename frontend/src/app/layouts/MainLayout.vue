@@ -1,13 +1,15 @@
 <template>
-  <router-view v-slot="{ Component }">
-    <Transition appear>
-      <component :is="Component" />
-    </Transition>
-  </router-view>
+  <a-layout class="layout">
+    <router-view v-slot="{ Component }">
+      <Transition appear>
+        <component :is="Component" />
+      </Transition>
+    </router-view>
+  </a-layout>
 </template>
 
 <style lang="scss" scoped>
 .layout {
-  height: 100vh;
+  min-height: 100vh;
 }
 </style>
