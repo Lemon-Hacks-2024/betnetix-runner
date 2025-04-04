@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"backend-service/internal/services"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -9,18 +10,17 @@ import (
 )
 
 type Handler struct {
-	log zerolog.Logger
-	//services     *services.Service
+	log      zerolog.Logger
+	services *services.Service
 }
 
 func NewHandler(
 	log zerolog.Logger,
-	// services *services.Service,
-	// appSecretKey string
+	services *services.Service,
 ) *Handler {
 	return &Handler{
-		log: log,
-		//services:     services,
+		log:      log,
+		services: services,
 	}
 }
 

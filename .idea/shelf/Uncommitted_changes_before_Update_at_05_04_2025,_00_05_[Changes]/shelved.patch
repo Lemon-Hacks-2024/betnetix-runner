@@ -1,0 +1,177 @@
+Index: backend/internal/storages/storage.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/internal/storages/storage.go b/backend/internal/storages/storage.go
+new file mode 100644
+--- /dev/null	(date 1743800567610)
++++ b/backend/internal/storages/storage.go	(date 1743800567610)
+@@ -0,0 +1,26 @@
++package storages
++
++import (
++	"backend-service/internal/entity"
++	"backend-service/pkg/database"
++)
++
++type Player interface {
++	Create(user entity.Player) (string, error)
++	GetById(id string) (entity.Player, error)
++	GetByEmail(email string) (entity.Player, error)
++	IsExistByEmail(email string) bool
++	UpdateByEmail(user entity.Player) (entity.Player, error)
++	DeleteById(id string) error
++	GetAll() ([]entity.Player, error)
++}
++
++type Storage struct {
++	Player
++}
++
++func NewStorage(postgres *database.PostgresDB) *Storage {
++	return &Storage{
++		Player: NewPlayerStorage(postgres),
++	}
++}
+Index: backend/internal/entity/race.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/internal/entity/race.go b/backend/internal/entity/race.go
+new file mode 100644
+--- /dev/null	(date 1743798993021)
++++ b/backend/internal/entity/race.go	(date 1743798993021)
+@@ -0,0 +1,6 @@
++package entity
++
++type Race struct {
++	ID      string `json:"id" db:"id"`
++	Players Player `json:"Player" db:"player"`
++}
+Index: backend/internal/storages/s_player.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/internal/storages/s_player.go b/backend/internal/storages/s_player.go
+new file mode 100644
+--- /dev/null	(date 1743800643317)
++++ b/backend/internal/storages/s_player.go	(date 1743800643317)
+@@ -0,0 +1,115 @@
++package storages
++
++import (
++	"backend-service/internal/entity"
++	"backend-service/pkg/database"
++)
++
++type PlayerStorage struct {
++	postgres *database.PostgresDB
++}
++
++func NewPlayerStorage(postgres *database.PostgresDB) *PlayerStorage {
++	return &PlayerStorage{
++		postgres: postgres,
++	}
++}
++
++func (s *PlayerStorage) Create(p entity.Player) (string, error) {
++	query := `INSERT INTO players 
++	(id, name, color, number, reaction_time, acceleration, max_speed, coef_speed_loss)
++	VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`
++
++	var id string
++	err := s.postgres.DB.QueryRow(
++		query,
++		p.ID,
++		p.Name,
++		p.Color,
++		p.Number,
++		p.ReactionTime,
++		p.Acceleration,
++		p.MaxSpeed,
++		p.CoffSpeedLoos,
++	).Scan(&id)
++
++	return id, err
++}
++
++func (s *PlayerStorage) GetById(id string) (entity.Player, error) {
++	query := `SELECT id, name, color, number, reaction_time, acceleration, max_speed, coef_speed_loss
++			  FROM players WHERE id = $1`
++
++	var p entity.Player
++	err := s.postgres.DB.Get(&p, query, id)
++	if err != nil {
++		return entity.Player{}, err
++	}
++
++	return p, nil
++}
++
++func (s *PlayerStorage) GetByEmail(email string) (entity.Player, error) {
++	query := `SELECT id, name, color, number, reaction_time, acceleration, max_speed, coef_speed_loss
++			  FROM players WHERE number = $1` // тут "number" вместо email
++
++	var p entity.Player
++	err := s.postgres.DB.Get(&p, query, email)
++	if err != nil {
++		return entity.Player{}, err
++	}
++
++	return p, nil
++}
++
++func (s *PlayerStorage) IsExistByEmail(email string) bool {
++	query := `SELECT EXISTS(SELECT 1 FROM players WHERE number = $1)`
++	var exists bool
++	err := s.postgres.DB.Get(&exists, query, email)
++	if err != nil {
++		return false
++	}
++	return exists
++}
++
++func (s *PlayerStorage) UpdateByEmail(p entity.Player) (entity.Player, error) {
++	query := `UPDATE players
++			  SET name=$1, color=$2, reaction_time=$3, acceleration=$4, max_speed=$5, coef_speed_loss=$6
++			  WHERE number=$7
++			  RETURNING id, name, color, number, reaction_time, acceleration, max_speed, coef_speed_loss`
++
++	var updated entity.Player
++	err := s.postgres.DB.Get(&updated, query,
++		p.Name,
++		p.Color,
++		p.ReactionTime,
++		p.Acceleration,
++		p.MaxSpeed,
++		p.CoffSpeedLoos,
++		p.Number,
++	)
++
++	if err != nil {
++		return entity.Player{}, err
++	}
++
++	return updated, nil
++}
++
++func (s *PlayerStorage) DeleteById(id string) error {
++	query := `DELETE FROM players WHERE id = $1`
++	_, err := s.postgres.DB.Exec(query, id)
++	return err
++}
++
++func (s *PlayerStorage) GetAll() ([]entity.Player, error) {
++	query := `SELECT id, name, color, number, reaction_time, acceleration, max_speed, coef_speed_loss FROM players`
++
++	var players []entity.Player
++	err := s.postgres.DB.Select(&players, query)
++	if err != nil {
++		return nil, err
++	}
++
++	return players, nil
++}
