@@ -1,0 +1,74 @@
+name: Docker Image CI/CD
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: cr.yandex/crptmld0urbjdu4sa62o
+
+jobs:
+
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      repository_name: ${{ steps.repository_name.outputs.repository_name }}
+      image_tag: ${{ steps.image_tag.outputs.image_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract repository name
+        id: repository_name
+        run: echo "::set-output name=repository_name::${GITHUB_REPOSITORY#*/}"
+
+      - name: Image tag
+        id: image_tag
+        run: echo "::set-output name=image_tag::$REGISTRY/${{ steps.repository_name.outputs.repository_name }}:${{ github.sha }}"
+
+  build:
+    runs-on: ubuntu-latest
+    needs: prepare
+    outputs:
+      repository_name: ${{ needs.prepare.outputs.repository_name }}
+      image_tag: ${{ needs.prepare.outputs.image_tag }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Yandex Container Registry
+        run: echo "${{ secrets.YA_CLOUD_OAUTH }}" | docker login --username oauth --password-stdin cr.yandex
+
+      - name: Build Docker image
+        run: |
+          docker build ./backend --tag ${{ needs.prepare.outputs.image_tag }}
+
+      - name: Push the Docker image
+        run: docker push ${{ needs.prepare.outputs.image_tag }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy Docker container on server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            echo "Pulling image ${{ needs.build.outputs.image_tag }}"
+            docker pull ${{ needs.build.outputs.image_tag }}
+            echo "Stopping container ${{ needs.build.outputs.repository_name }}"
+            docker stop ${{ needs.build.outputs.repository_name }} || true
+            echo "Removing container ${{ needs.build.outputs.repository_name }}"
+            docker rm ${{ needs.build.outputs.repository_name }} || true
+            echo "Running container ${{ needs.build.outputs.repository_name }}"
+            docker run -d --name ${{ needs.build.outputs.repository_name }} -p 10010:8080 --env-file ./betnetix-runner-backend.env ${{ needs.build.outputs.image_tag }}
+            docker image prune -f
+            docker image prune -a -f
