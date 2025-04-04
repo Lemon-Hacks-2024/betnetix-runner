@@ -2,6 +2,7 @@
 import { computed, defineAsyncComponent } from "vue";
 import ruRU from "ant-design-vue/es/locale/ru_RU";
 import { useRoute } from "vue-router";
+
 import dayjs from "dayjs";
 import "dayjs/locale/ru";
 
@@ -33,4 +34,6 @@ const layout = computed(() => {
 <style lang="scss">
 @use "./styles/vars.scss";
 @use "./styles/main.scss";
+
+
 </style>
