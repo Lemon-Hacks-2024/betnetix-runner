@@ -6,18 +6,8 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _from, next) => {
-  const token = !!localStorage.getItem("token");
-  const isRequireAuth = to.meta?.auth || false;
-  const isRequireNoAuth = to.meta?.noAuth || false;
-
-  if (isRequireAuth && !token) {
-    next("/login");
-  } else if (isRequireNoAuth && token) {
-    next("/");
-  } else {
-    next();
-  }
+router.afterEach(async (to) => {
+  if (to.meta.title) document.title = (to.meta.title as string) + " | LemonBet";
 });
 
 export { router };

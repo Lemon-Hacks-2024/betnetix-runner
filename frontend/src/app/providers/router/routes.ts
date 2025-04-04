@@ -1,11 +1,11 @@
 export const routes = [
   {
-    path: "/login",
-    name: "login",
+    path: "/main",
+    name: "main",
     meta: {
-      noAuth: true,
-      layout: "auth",
+      layout: "main",
+      title: "Лобби",
     },
-    component: () => import("@/pages/login"),
+    component: () => import("@/pages/main"),
   },
 ];
