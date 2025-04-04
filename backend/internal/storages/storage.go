@@ -18,9 +18,9 @@ type Storage struct {
 	Group
 }
 
-func NewStorage(postgres *database.PostgresDB) *Storage {
+func NewStorage(pg *database.PostgresDB, redis *database.Redis) *Storage {
 	return &Storage{
-		Group: NewGroupStorage(postgres),
-		Race:  NewRaceStorage(postgres),
+		Group: NewGroupStorage(pg),
+		//Race:  NewRaceStorage(postgres),
 	}
 }

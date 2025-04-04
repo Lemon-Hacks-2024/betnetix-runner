@@ -3,6 +3,8 @@ package app
 import (
 	"backend-service/internal/config"
 	"backend-service/internal/handlers"
+	"backend-service/internal/services"
+	"backend-service/internal/storages"
 	"backend-service/pkg/database"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
@@ -26,17 +28,23 @@ func Run() {
 	// cfg
 	cfg := config.GetConfig()
 	// postgres
-	_, err = database.NewPostgresDB(cfg.Postgres.DBHost, cfg.Postgres.DBPort, cfg.Postgres.DBUser, cfg.Postgres.DBName, cfg.Postgres.DBPass, cfg.Postgres.DBSSLMode)
+	pg, err := database.NewPostgresDB(cfg.Postgres.DBHost, cfg.Postgres.DBPort, cfg.Postgres.DBUser, cfg.Postgres.DBName, cfg.Postgres.DBPass, cfg.Postgres.DBSSLMode)
 	if err != nil {
 		logger.Fatal().Msg(err.Error())
 	}
 	logger.Info().Msg("Postgres: OK")
+	// redis
+	redis, err := database.NewRedis(cfg.Redis.Host+":"+cfg.Redis.Port, cfg.Redis.Password, cfg.Redis.DB)
+	if err != nil {
+		logger.Error().Msgf("Error connecting to Redis: %v", err)
+	}
+	logger.Info().Msg("Redis: OK")
 	// storages
-
+	storage := storages.NewStorage(pg, redis)
 	// services
-
+	service := services.NewService(logger, storage)
 	// handlers
-	handler := handlers.NewHandler(logger)
+	handler := handlers.NewHandler(logger, service)
 	// run
 	handler.InitRoutes(cfg.AppPort)
 }

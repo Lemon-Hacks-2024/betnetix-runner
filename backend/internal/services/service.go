@@ -21,7 +21,7 @@ type Service struct {
 
 func NewService(log zerolog.Logger, storage *storages.Storage) *Service {
 	return &Service{
-		Player: NewPlayerService(log, storage),
-		Race:   NewRaceService(log, storage),
+		//Player: NewPlayerService(log, storage),
+		Race: NewRaceService(log, storage),
 	}
 }

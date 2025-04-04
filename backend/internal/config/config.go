@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -10,6 +11,7 @@ type Config struct {
 	AppApiKey string
 	AppSecret string
 	Postgres  Postgres
+	Redis     Redis
 }
 
 type Postgres struct {
@@ -19,6 +21,13 @@ type Postgres struct {
 	DBName    string
 	DBPass    string
 	DBSSLMode string
+}
+
+type Redis struct {
+	Host     string
+	Port     string
+	Password string
+	DB       int
 }
 
 func GetConfig() Config {
@@ -78,6 +87,37 @@ func GetConfig() Config {
 		fmt.Println("DBSSL_MODE environment variable is not set. Using default value: disable")
 	}
 
+	// redis
+	redisHost := os.Getenv("REDIS_HOST")
+	if redisHost == "" {
+		redisHost = "localhost"
+		fmt.Println("REDIS_HOST environment variable is not set. Using default value: localhost")
+	}
+
+	redisPort := os.Getenv("REDIS_PORT")
+	if redisPort == "" {
+		redisPort = "6379"
+		fmt.Println("REDIS_PORT environment variable is not set. Using default value: 6379")
+	}
+
+	redisPassword := os.Getenv("REDIS_PASSWORD")
+	if redisPassword == "" {
+		redisPassword = "password"
+		fmt.Println("REDIS_PASSWORD environment variable is not set. Using default value: password")
+	}
+
+	redisDB := os.Getenv("REDIS_DB")
+	if redisDB == "" {
+		redisDB = "0"
+		fmt.Println("REDIS_DB environment variable is not set. Using default value: 0")
+	}
+
+	redisDBInt, err := strconv.Atoi(redisDB)
+	if err != nil {
+		fmt.Println("REDIS_DB environment variable is not a number. Using default value: 0")
+		redisDBInt = 0
+	}
+
 	return Config{
 		AppPort:   appPort,
 		AppApiKey: appApiKey,
@@ -89,6 +129,12 @@ func GetConfig() Config {
 			DBName:    dbName,
 			DBPass:    dbPass,
 			DBSSLMode: dbSSLMode,
+		},
+		Redis: Redis{
+			Host:     redisHost,
+			Port:     redisPort,
+			Password: redisPassword,
+			DB:       redisDBInt,
 		},
 	}
 }
