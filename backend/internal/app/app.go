@@ -2,6 +2,7 @@ package app
 
 import (
 	"backend-service/internal/config"
+	"backend-service/internal/handlers"
 	"backend-service/pkg/database"
 	"github.com/joho/godotenv"
 	"github.com/rs/zerolog"
@@ -31,7 +32,11 @@ func Run() {
 	}
 	logger.Info().Msg("Postgres: OK")
 	// storages
+
 	// services
+
 	// handlers
+	handler := handlers.NewHandler(logger)
 	// run
+	handler.InitRoutes(cfg.AppPort)
 }
