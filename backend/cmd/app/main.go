@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "backend-service/internal/app"
 
+func main() {
+	app.Run()
 }
