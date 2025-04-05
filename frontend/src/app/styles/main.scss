@@ -6,6 +6,20 @@ body {
   overscroll-behavior: none;
 }
 
+* {
+  transition-property: background-color, border-color, box-shadow;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 0.15s;
+}
+
+@font-face {
+  font-family: "Jura";
+  src: url("@/assets/fonts/Jura") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
 .ant-btn-primary,
 .ant-btn-default {
   box-shadow: none;

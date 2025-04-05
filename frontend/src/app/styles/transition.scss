@@ -1,5 +1,5 @@
 .v-enter-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .v-enter-from,
@@ -9,7 +9,7 @@
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s ease-in-out;
 }
 
 .fade-enter-from,
@@ -18,7 +18,7 @@
 }
 
 .show {
-  animation: showIn 0.3s ease both;
+  animation: showIn 0.3s ease-in-out both;
 }
 
 @keyframes showIn {
