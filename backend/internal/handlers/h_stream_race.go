@@ -74,7 +74,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 		if count == 0 {
 			break
 		}
-		msg, _ := json.Marshal(map[string]interface{}{"message": "countdown", "details": string(count)})
+		msg, _ := json.Marshal(map[string]interface{}{"message": "countdown", "details": count})
 		count -= 1
 		groupSubscribers[groupId].BroadcastMessage(websocket.TextMessage, msg)
 	}
