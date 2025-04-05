@@ -48,6 +48,16 @@ func (h *Handler) InitRoutes(port string) {
 		{
 			groups.Post("/", h.createGroup)
 			groups.Get("/", h.getGroups)
+
+			groupId := groups.Group("/:id")
+			{
+				//groupId.Get("/", h.getGroup)
+
+				races := groupId.Group("/races")
+				{
+					races.Post("/", h.newRace)
+				}
+			}
 		}
 		// Upgraded websocket request
 		//api.Get("/screens/:id/content", websocket.New(func(c *websocket.Conn) {
