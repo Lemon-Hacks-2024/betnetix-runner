@@ -52,11 +52,13 @@ func (s *GroupService) GetRandomPlayers() ([]entity.Player, error) {
 func (g GroupService) GetGroup(groupID string) (entity.Group, error) {
 	group, err := g.storage.Group.GetById(groupID)
 	if err != nil {
+		g.log.Error().Err(err).Msg("не удалось получить группу")
 		return entity.Group{}, err
 	}
 
 	races, err := g.storage.Race.GetAllByGroupId(groupID)
 	if err != nil {
+		g.log.Error().Err(err).Msg("не удалось получить группу")
 		return entity.Group{}, err
 	}
 
