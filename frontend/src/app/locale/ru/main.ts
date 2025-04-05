@@ -1,4 +1,6 @@
 export const TextsMain = {
+  title: "Название",
+  lastRace: "Последний забег",
   groupCreating: "Создание группы",
   randomByDefault: "По умолчанию параметры учеников будут случайными",
   recommendedValues: "Рекомендуемые значения от 10 до 12 м/с",

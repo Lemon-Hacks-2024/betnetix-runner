@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-defineProps<{
+import { ref } from "vue";
+
+const props = defineProps<{
   width?: string;
   height?: string;
+  pressable?: boolean;
   variant?: "flat" | "soft" | "neu";
   inset?: boolean;
   glass?: boolean;
@@ -11,6 +14,15 @@ defineProps<{
   padding?: string;
   hover?: boolean;
 }>();
+
+const isPressed = ref<boolean>(false);
+
+const onPress = () => {
+  if (props.pressable) isPressed.value = true;
+};
+const onRelease = () => {
+  if (props.pressable) isPressed.value = false;
+};
 </script>
 
 <template>
@@ -18,7 +30,14 @@ defineProps<{
     class="neumorphic"
     :class="[
       variant || 'neu',
-      { inset, glass, 'has-border': border, 'has-hover': hover, reverse },
+      {
+        inset: inset || (pressable && isPressed),
+        pressed: pressable && isPressed,
+        glass,
+        'has-border': border,
+        'has-hover': hover,
+        reverse,
+      },
     ]"
     :style="{
       width: width || '100%',
@@ -29,6 +48,11 @@ defineProps<{
       borderRadius: radius || '12px',
       padding: padding || '0',
     }"
+    @mousedown="onPress"
+    @mouseup="onRelease"
+    @mouseleave="onRelease"
+    @touchstart="onPress"
+    @touchend="onRelease"
   >
     <slot />
   </div>
@@ -37,6 +61,7 @@ defineProps<{
 <style lang="scss" scoped>
 .neumorphic {
   position: relative;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 
   &.flat {
     box-shadow: none;
@@ -80,6 +105,10 @@ defineProps<{
       box-shadow: inset 6px 6px 10px rgba(#000000, 0.5),
         inset -6px -6px 10px rgba(#ffffff, 0.05);
     }
+  }
+
+  &.pressed {
+    transform: scale(0.98);
   }
 }
 </style>

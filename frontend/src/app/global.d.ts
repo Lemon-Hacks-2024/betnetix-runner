@@ -1,7 +1,7 @@
-import GlobalTexts from "@/app/locale";
+import { TextsType } from "@/app/locale";
 
 declare module "@vue/runtime-core" {
   interface ComponentCustomProperties {
-    $t: typeof GlobalTexts;
+    $t: TextsType;
   }
 }

@@ -21,10 +21,11 @@ import Header from "./Header.vue";
 .layout-wrapper {
   display: flex;
   align-items: center;
-  justify-content: center;
   min-height: 100vh;
+  padding-top: 150px;
 
   .layout-container {
+    width: 100%;
     height: 100%;
     max-width: 1440px;
     padding: 30px 70px;

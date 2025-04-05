@@ -9,21 +9,38 @@ const openCreateGroup = ref(false);
 </script>
 
 <template>
-  <div>
-    <a-flex align="center" justify="flex-end" class="mb-5">
-      <a-button
-        @click="openCreateGroup = true"
-        type="primary"
-        :icon="h(PlusOutlined)"
-      >
-        {{ $t.buttons.createGroup }}
-      </a-button>
-    </a-flex>
+  <div class="main-page-wrapper">
+    <a-card class="table-wrapper" :bordered="false">
+      <template #extra>
+        <a-button
+          class="card-btn"
+          type="primary"
+          :icon="h(PlusOutlined)"
+          @click="openCreateGroup = true"
+        >
+          {{ $t.buttons.createGroup }}
+        </a-button>
+      </template>
 
-    <CreateGroup v-model:open="openCreateGroup" />
+      <CreateGroup v-model:open="openCreateGroup" />
 
-    <a-card :bordered="false">
       <GroupsTable />
     </a-card>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.table-wrapper {
+  border-radius: 40px;
+
+  .card-btn {
+    height: fit-content;
+    padding: 8px 20px;
+    border-radius: 16px;
+  }
+
+  :deep(.ant-card-head) {
+    padding: 18px;
+  }
+}
+</style>

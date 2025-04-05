@@ -1,3 +1,4 @@
-import { GlobalTexts } from "./ru";
+// просто прокидываем типизацию
+import * as ru from "./ru";
 
-export default GlobalTexts;
+export type TextsType = typeof ru.GlobalTexts;
