@@ -9,6 +9,7 @@ import (
 type Group interface {
 	CreateGroup(group entity.Group) (string, error)
 	GetGroups() ([]entity.Group, error)
+	GetGroup(groupID string) (entity.Group, error)
 }
 
 type Service struct {

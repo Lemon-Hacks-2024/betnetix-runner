@@ -8,6 +8,7 @@ import (
 type Group interface {
 	Create(group entity.Group) (string, error)
 	GetAllGroups() ([]entity.Group, error)
+	GetById(groupID string) (entity.Group, error)
 }
 
 type Storage struct {

@@ -51,7 +51,7 @@ func (h *Handler) InitRoutes(port string) {
 
 			groupId := groups.Group("/:id")
 			{
-				//groupId.Get("/", h.getGroup)
+				groupId.Get("/", h.getGroup)
 
 				races := groupId.Group("/races")
 				{

@@ -14,6 +14,21 @@ type GroupService struct {
 	storage *storages.Storage
 }
 
+func (g GroupService) GetGroup(groupID string) (entity.Group, error) {
+	group, err := g.storage.Group.GetById(groupID)
+	if err != nil {
+		return entity.Group{}, err
+	}
+
+	races, err := g.storage.Race.GetAllByGroupId(groupID)
+	if err != nil {
+		return entity.Group{}, err
+	}
+
+	group.Races = races
+	return group, nil
+}
+
 func (g GroupService) GetGroups() ([]entity.Group, error) {
 	groups, err := g.storage.Group.GetAllGroups()
 	if err != nil {

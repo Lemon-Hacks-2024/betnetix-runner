@@ -49,11 +49,25 @@ func (g GroupStorage) Create(group entity.Group) (string, error) {
 }
 
 func (g GroupStorage) GetAllGroups() ([]entity.Group, error) {
-	query := `SELECT id, name, players, created_at FROM groups WHERE deleted_at = 0`
+	query := `
+		SELECT 
+			gr.id,
+			gr.name,
+			COALESCE(r.finished_at, 0) AS finished_at
+		FROM groups gr
+		LEFT JOIN LATERAL (
+			SELECT finished_at
+			FROM races
+			WHERE races.group_id = gr.id
+			ORDER BY started_at DESC
+			LIMIT 1
+		) r ON true
+		WHERE gr.deleted_at = 0;
+	`
 
 	rows, err := g.postgres.DB.Query(query)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch groups: %w", err)
+		return nil, fmt.Errorf("failed to fetch groups with last race: %w", err)
 	}
 	defer rows.Close()
 
@@ -61,19 +75,34 @@ func (g GroupStorage) GetAllGroups() ([]entity.Group, error) {
 
 	for rows.Next() {
 		var group entity.Group
-		var playersRaw []byte
 
-		err := rows.Scan(&group.ID, &group.Name, &playersRaw, &group.DateTimeLastRace)
+		err := rows.Scan(&group.ID, &group.Name, &group.DateTimeLastRace)
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan group row: %w", err)
-		}
-
-		if err := json.Unmarshal(playersRaw, &group.Players); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal players: %w", err)
 		}
 
 		groups = append(groups, group)
 	}
 
 	return groups, nil
+}
+
+func (g GroupStorage) GetById(groupID string) (entity.Group, error) {
+	query := `SELECT id, name, players, created_at FROM groups WHERE id = $1 AND deleted_at = 0`
+
+	var group entity.Group
+	var playersRaw []byte
+
+	err := g.postgres.DB.QueryRow(query, groupID).Scan(&group.ID, &group.Name, &playersRaw, &group.DateTimeLastRace)
+	if err != nil {
+		return entity.Group{}, fmt.Errorf("failed to get group by id: %w", err)
+	}
+
+	if playersRaw != nil {
+		if err := json.Unmarshal(playersRaw, &group.Players); err != nil {
+			return entity.Group{}, fmt.Errorf("failed to unmarshal players: %w", err)
+		}
+	}
+
+	return group, nil
 }

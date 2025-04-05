@@ -4,7 +4,6 @@ import (
 	"backend-service/internal/entity"
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
-	"time"
 )
 
 func (h *Handler) createGroup(c *fiber.Ctx) error {
@@ -21,8 +20,8 @@ func (h *Handler) createGroup(c *fiber.Ctx) error {
 	group := entity.Group{
 		ID:               uuid.New().String(),
 		Name:             input.Name,
-		DateTimeLastRace: time.Now().Unix(),
-		Players:          nil, // будет сгенерировано в сервисе
+		DateTimeLastRace: 0,
+		Players:          nil,
 	}
 
 	// Создаём группу через сервис
@@ -60,4 +59,22 @@ func (h *Handler) getGroups(c *fiber.Ctx) error {
 			"groups": groups,
 		},
 	})
+}
+
+func (h *Handler) getGroup(c *fiber.Ctx) error {
+	groupID := c.Params("id")
+	if groupID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "group ID is required",
+		})
+	}
+
+	group, err := h.services.Group.GetGroup(groupID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+		})
+	}
+
+	return c.JSON(group)
 }
