@@ -1,11 +1,10 @@
-
 CREATE TABLE IF NOT EXISTS groups
 (
     id         UUID         NOT NULL DEFAULT gen_random_uuid(),
     name       VARCHAR(100) NOT NULL,
     players    JSONB        NOT NULL,
     created_at BIGINT       NOT NULL,
-    deleted_at BIGINT       NOT NULL,
+    deleted_at BIGINT,
     PRIMARY KEY (id)
 );
 

@@ -54,9 +54,15 @@ func (s *RaceStorage) GetAllByGroupId(groupID string) ([]entity.Race, error) {
 }
 
 func (s *RaceStorage) SetResults(race entity.Race) (string, error) {
-	query := `UPDATE races SET results = $1 WHERE id = $2 RETURNING id`
+	// Сериализуем в JSONB
+	raceResultJSONB, err := json.Marshal(race.Results)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal race results: %w", err)
+	}
+
+	query := `UPDATE races SET results = $2, started_at = $4, finished_at = $3 WHERE id = $1 RETURNING id`
 	var id string
-	err := s.postgres.DB.QueryRow(query, race.Results, race.Id).Scan(&id)
+	err = s.postgres.DB.QueryRow(query, race.Id, raceResultJSONB, race.StartedAt, race.FinishedAt).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -81,4 +87,33 @@ func (s *RaceStorage) ExistActive(groupID string) (bool, error) {
 		return false, err
 	}
 	return exists, nil
+}
+
+func (s *RaceStorage) GetAllActive() ([]entity.Race, error) {
+	query := `SELECT id, group_id FROM races WHERE finished_at IS NULL`
+	var races []entity.Race
+	err := s.postgres.DB.Select(&races, query)
+	if err != nil {
+		return nil, err
+	}
+	return races, nil
+}
+
+func (s *RaceStorage) SetLockRace(raceId string) error {
+	key := fmt.Sprintf("race-lock:%s", raceId)
+	err := s.redis.Client.Set(key, true, time.Minute*1).Err()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *RaceStorage) GetLockRace(raceId string) bool {
+	key := fmt.Sprintf("race-lock:%s", raceId)
+	val, err := s.redis.Client.Get(key).Result()
+	if err != nil {
+		return false
+	}
+
+	return val == "1"
 }

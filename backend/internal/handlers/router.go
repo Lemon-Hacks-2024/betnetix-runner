@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"backend-service/internal/services"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
@@ -62,23 +63,10 @@ func (h *Handler) InitRoutes(port string) {
 			}
 		}
 
-		// Upgraded websocket request
-		//api.Get("/screens/:id/content", websocket.New(func(c *websocket.Conn) {
-		//	fmt.Println(c.Locals("Host")) // "Localhost:3000"
-		//	for {
-		//		mt, msg, err := c.ReadMessage()
-		//		if err != nil {
-		//			h.log.Error().Msgf("read error: %v", err)
-		//			break
-		//		}
-		//		h.log.Debug().Msgf("recv: %s", msg)
-		//		err = c.WriteMessage(mt, msg)
-		//		if err != nil {
-		//			h.log.Error().Msgf("write error: %v", err)
-		//			break
-		//		}
-		//	}
-		//}))
+		streams := api.Group("/streams")
+		{
+			streams.Get("/race", websocket.New(h.streamRaces))
+		}
 
 	}
 

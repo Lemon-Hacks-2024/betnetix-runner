@@ -9,6 +9,7 @@ import (
 
 type Race interface {
 	CreateRace(race entity.Race) (string, error)
+	SetResults(race entity.Race) (string, error)
 }
 
 type RaceService struct {
@@ -24,15 +25,15 @@ func NewRaceService(log zerolog.Logger, storage *storages.Storage) *RaceService 
 }
 
 func (s *RaceService) CreateRace(race entity.Race) (string, error) {
-	existActiveRace, err := s.storage.Race.ExistActive(race.GroupId)
-	if err != nil {
-		s.log.Error().Msgf("error checking active race: %v", err)
-		return "", errors.New("error checking active race")
-	}
+	//existActiveRace, err := s.storage.Race.ExistActive(race.GroupId)
+	//if err != nil {
+	//	s.log.Error().Msgf("error checking active race: %v", err)
+	//	return "", errors.New("error checking active race")
+	//}
 
-	if existActiveRace {
-		return "", errors.New("active race already exists")
-	}
+	//if existActiveRace {
+	//	return "", errors.New("active race already exists")
+	//}
 
 	raceId, err := s.storage.Race.Create(race)
 	if err != nil {
@@ -40,5 +41,17 @@ func (s *RaceService) CreateRace(race entity.Race) (string, error) {
 		return "", errors.New("error creating race")
 	}
 
+	return raceId, nil
+}
+
+func (s *RaceService) SetResults(race entity.Race) (string, error) {
+	//for i := range race.Results {
+	//	race.Results[i].RaceTime = race.Results[i].FinishedAt - race.StartedAt
+	//}
+	raceId, err := s.storage.Race.SetResults(race)
+	if err != nil {
+		s.log.Error().Msgf("error setting race results: %v", err)
+		return "", errors.New("error setting race results")
+	}
 	return raceId, nil
 }
