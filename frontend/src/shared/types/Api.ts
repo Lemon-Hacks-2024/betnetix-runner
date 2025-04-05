@@ -1,8 +1,6 @@
 // Типы ошибок API
 export interface ApiError {
-  code: number;
   message: string;
-  error: string;
 }
 
 // Опции для useApi
@@ -14,8 +12,7 @@ export interface UseApiOptions {
 }
 
 export interface ApiResponse<T = null> {
-  data: T;
-  code: number;
+  details: T;
   message: string;
 }
 

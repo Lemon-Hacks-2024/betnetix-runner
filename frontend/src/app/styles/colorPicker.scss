@@ -1,0 +1,19 @@
+.vc-chrome {
+  box-shadow: none !important;
+
+  &-controls {
+    align-items: center;
+  }
+
+  &-hue-wrap {
+    margin: 0;
+  }
+
+  &-alpha-wrap {
+    display: none;
+  }
+
+  &-toggle-btn {
+    display: none;
+  }
+}

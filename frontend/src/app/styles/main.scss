@@ -1,6 +1,16 @@
 @use "transition";
+@use "colorPicker";
 
 html,
 body {
   overscroll-behavior: none;
+}
+
+.ant-btn-primary,
+.ant-btn-default {
+  box-shadow: none;
+}
+
+.anticon svg {
+  vertical-align: baseline;
 }
