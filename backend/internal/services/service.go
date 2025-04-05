@@ -6,8 +6,9 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type Player interface {
-	CreatePlayer(player entity.Player) (string, error)
+type Group interface {
+	CreateGroup(group entity.Group) (string, error)
+	GetGroups() ([]entity.Group, error)
 }
 
 type Race interface {
@@ -15,13 +16,13 @@ type Race interface {
 }
 
 type Service struct {
-	Player
+	Group
 	Race
 }
 
 func NewService(log zerolog.Logger, storage *storages.Storage) *Service {
 	return &Service{
-		//Player: NewPlayerService(log, storage),
-		Race: NewRaceService(log, storage),
+		Group: NewGroupService(log, storage),
+		Race:  NewRaceService(log, storage),
 	}
 }
