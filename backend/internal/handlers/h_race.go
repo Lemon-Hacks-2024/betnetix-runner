@@ -52,7 +52,7 @@ func generatePlayers(numPlayers int, groupID string) []entity.Player {
 			GroupID:       groupID,
 			Name:          names[rand.Intn(len(names))],
 			Color:         colors[rand.Intn(len(colors))],
-			Number:        fmt.Sprintf("%d", rand.Intn(100)+1),
+			Number:        rand.Intn(100) + 1,
 			ReactionTime:  0.1 + rand.Float64()*(0.3-0.1),    // Реакция в диапазоне 0.1 до 0.3 секунд
 			Acceleration:  8 + rand.Float64()*(12-7),         // Ускорение от 8 до 12 м/с²
 			MaxSpeed:      10 + rand.Float64()*(12-10),       // Максимальная скорость от 10 до 12 м/с
