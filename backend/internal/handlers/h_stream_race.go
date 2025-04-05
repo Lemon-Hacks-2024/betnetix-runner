@@ -52,7 +52,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 			Distance: 0,
 		}
 	}
-	h.log.Debug().Msgf("raceId: %v", raceId)
+	//h.log.Debug().Msgf("raceId: %v", raceId)
 	race := entity.Race{
 		Id:        "",
 		GroupId:   groupId,

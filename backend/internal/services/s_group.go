@@ -36,10 +36,10 @@ func (s *GroupService) GetRandomPlayers() ([]entity.Player, error) {
 			Name:          "Игрок " + string(rune('A'+i)),
 			Number:        string(rune('1' + i)),
 			Color:         defaultHexColors[i%len(defaultHexColors)],
-			ReactionTime:  0.1 + rand.Float64()*(0.3-0.1), // от 0.1 до 0.3
-			Acceleration:  2 + rand.Float64()*3,           // от 2 до 5 м/с²
-			MaxSpeed:      7 + rand.Float64()*4,           // от 7 до 11 м/с
-			CoffSpeedLoos: 0.05 + rand.Float64()*0.15,     // от 0.05 до 0.2
+			ReactionTime:  0.1 + rand.Float64()*(0.3-0.1),    // Реакция в диапазоне 0.1 до 0.3 секунд
+			Acceleration:  8 + rand.Float64()*(12-7),         // Ускорение от 8 до 12 м/с²
+			MaxSpeed:      10 + rand.Float64()*(12-10),       // Максимальная скорость от 10 до 12 м/с
+			CoffSpeedLoos: 0.01 + rand.Float64()*(0.05-0.01), // Коэффициент потери скорости от 0.01 до 0.05
 		}
 		players = append(players, player)
 	}
