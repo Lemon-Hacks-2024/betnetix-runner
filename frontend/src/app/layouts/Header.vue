@@ -13,13 +13,32 @@ const { isDark } = storeToRefs(useThemeStore());
   <header class="header-container">
     <a-card class="header-content-wrapper" :bordered="false">
       <a-flex class="header-content" justify="space-between" align="center">
-        <BaseNeumorphic width="80px" height="80px">
+        <BaseNeumorphic
+          variant="neu"
+          width="100px"
+          height="100px"
+          radius="999px"
+          padding="20px"
+          hover
+          border
+        >
           <div class="logo-wrapper">
             <img v-if="isDark" class="logo" :src="DarkLogo" />
             <img v-else class="logo" :src="LightLogo" />
           </div>
         </BaseNeumorphic>
-        <ThemeToggle />
+
+        <BaseNeumorphic
+          variant="flat"
+          width="56px"
+          height="32px"
+          radius="999px"
+          reverse
+          inset
+          hover
+        >
+          <ThemeToggle />
+        </BaseNeumorphic>
       </a-flex>
     </a-card>
   </header>
@@ -28,19 +47,24 @@ const { isDark } = storeToRefs(useThemeStore());
 <style lang="scss" scoped>
 .header-container {
   position: fixed;
+  top: 30px;
   left: 70px;
   right: 70px;
   border: none;
-  border-radius: 12px;
+  border-radius: 80px;
+  border-top-right-radius: 40px;
+  border-bottom-right-radius: 40px;
   box-shadow: 0 4px 10px var(--shadow-dark);
   backdrop-filter: blur(10px);
   z-index: 1000;
 
   .header-content-wrapper {
-    border-radius: 12px;
-    background-color: var(--opacity-element-color);
+    border-radius: 80px;
+    border-top-right-radius: 40px;
+    border-bottom-right-radius: 40px;
 
     .logo-wrapper {
+      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -54,9 +78,14 @@ const { isDark } = storeToRefs(useThemeStore());
     }
 
     .logo {
-      max-width: 70px;
-      max-height: 70px;
+      max-width: 80px;
+      max-height: 80px;
     }
   }
+}
+
+:deep(.ant-card-body) {
+  padding: 10px;
+  padding-right: 30px;
 }
 </style>

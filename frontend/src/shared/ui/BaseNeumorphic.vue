@@ -6,6 +6,7 @@ defineProps<{
   inset?: boolean;
   glass?: boolean;
   border?: boolean;
+  reverse?: boolean;
   radius?: string;
   padding?: string;
   hover?: boolean;
@@ -17,11 +18,14 @@ defineProps<{
     class="neumorphic"
     :class="[
       variant || 'neu',
-      { inset, glass, 'has-border': border, 'has-hover': hover },
+      { inset, glass, 'has-border': border, 'has-hover': hover, reverse },
     ]"
     :style="{
       width: width || '100%',
       height: height || '100%',
+      background: reverse
+        ? 'var(--element-color-reverse)'
+        : 'var(--element-color)',
       borderRadius: radius || '12px',
       padding: padding || '0',
     }"
@@ -48,6 +52,11 @@ defineProps<{
   &.inset {
     box-shadow: inset 4px 4px 10px var(--shadow-dark),
       inset -4px -4px 10px var(--shadow-light);
+
+    &.reverse {
+      box-shadow: inset 4px 4px 6px rgba(#000000, 0.5),
+        inset -4px -4px 6px rgba(#ffffff, 0.05);
+    }
   }
 
   &.glass {
@@ -67,6 +76,11 @@ defineProps<{
   &.inset.has-hover:hover {
     box-shadow: inset 6px 6px 10px var(--shadow-dark),
       inset -6px -6px 10px var(--shadow-light), 0 0 0 1px var(--shadow-border);
+
+    &.reverse {
+      box-shadow: inset 6px 6px 10px rgba(#000000, 0.5),
+        inset -6px -6px 10px rgba(#ffffff, 0.05);
+    }
   }
 }
 </style>

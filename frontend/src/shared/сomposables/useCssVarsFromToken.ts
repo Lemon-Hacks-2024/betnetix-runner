@@ -11,10 +11,6 @@ export const useCssVarsFromToken = () => {
     const t = token.value;
 
     root.style.setProperty("--bg-color", t.colorBgLayout);
-    root.style.setProperty(
-      "--bg-inverse",
-      isDark.value ? themeTokens.light.colorBgLayout : "#36587A"
-    );
     if (isDark.value) {
       root.style.setProperty("--shadow-dark", "rgba(0, 0, 0, 0.6)");
       root.style.setProperty("--shadow-light", "rgba(255, 255, 255, 0.04)");
@@ -26,6 +22,10 @@ export const useCssVarsFromToken = () => {
     }
     root.style.setProperty("--primary-color", t.colorPrimary);
     root.style.setProperty("--element-color", t.colorBgContainer);
+    root.style.setProperty(
+      "--element-color-reverse",
+      isDark.value ? themeTokens.light.colorBgContainer : "#36587A"
+    );
     root.style.setProperty(
       "--opacity-element-color",
       isDark.value ? "#0F1316CC" : "#F2F4F6CC"

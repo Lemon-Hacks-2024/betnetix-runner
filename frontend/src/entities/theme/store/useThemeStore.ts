@@ -1,9 +1,11 @@
 import { computed, ref, watch } from "vue";
 import { defineStore } from "pinia";
 import { theme } from "ant-design-vue";
-import { themeTokens } from "../model/themeTokens";
+import { themeTokens, ThemeType } from "../model";
+import { localStorageManager } from "@/shared/utils";
 
 export const useThemeStore = defineStore("theme", () => {
+  const { setStorageTheme, getStorageTheme } = localStorageManager();
   const isDark = ref<boolean>(true);
 
   const token = computed(() =>
@@ -15,14 +17,21 @@ export const useThemeStore = defineStore("theme", () => {
 
   const setTheme = (darkMode: boolean) => {
     isDark.value = darkMode;
+    const currentMode: ThemeType = darkMode ? "dark" : "light";
 
-    document.documentElement.setAttribute(
-      "data-color-scheme",
-      darkMode ? "dark" : "light"
-    );
+    document.documentElement.setAttribute("data-color-scheme", currentMode);
+    setStorageTheme(currentMode);
   };
 
-  watch(isDark, (val) => setTheme(val), { immediate: true });
+  watch(
+    isDark,
+    (val) => {
+      const currentTheme = getStorageTheme();
+      if (!!currentTheme) val = currentTheme === "dark" ? true : false;
+      setTheme(val);
+    },
+    { immediate: true }
+  );
 
   return {
     isDark,
