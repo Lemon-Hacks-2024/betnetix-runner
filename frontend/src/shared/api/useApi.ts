@@ -2,6 +2,7 @@ import { ref } from "vue";
 import { ApiError, UseApiOptions } from "../types";
 import { handleApiError } from "./handleApiError";
 import { message } from "ant-design-vue";
+import { AxiosError } from "axios";
 
 export function useApi<T, P = void>(
   apiCall: (params: P) => Promise<T>,
@@ -29,12 +30,16 @@ export function useApi<T, P = void>(
 
       return result;
     } catch (e) {
+      const err = e as AxiosError;
       error.value = handleApiError(e);
 
+      let messageError = "";
+      if (err.status) {
+        messageError = options.messagesError?.[err.status] ?? "";
+      }
+
       if (options.isMessageError !== false) {
-        const errorMessage = options.messagesError?.[error.value.code];
-        console.log(errorMessage || error.value.message);
-        message.error(errorMessage || error.value.message);
+        message.error(messageError ?? error.value.message);
       }
 
       throw e;
