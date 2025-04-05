@@ -11,7 +11,52 @@ type GroupStorage struct {
 	postgres *database.PostgresDB
 }
 
+func NewGroupStorage(pg *database.PostgresDB) *GroupStorage {
+	return &GroupStorage{
+		postgres: pg,
+	}
+}
+
+func (g GroupStorage) Create(group entity.Group) (string, error) {
+	// Нормализуем игроков перед сохранением
+	for i := range group.Players {
+		group.Players[i].Normalize()
+	}
+
+	playersJSON, err := json.Marshal(group.Players)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal players: %w", err)
+	}
+
+	query := `
+		INSERT INTO groups (id, name, players, created_at, deleted_at)
+		VALUES ($1, $2, $3, $4, $5)
+		RETURNING id;
+	`
+
+	var insertedID string
+	err = g.postgres.DB.QueryRow(
+		query,
+		group.ID,
+		group.Name,
+		playersJSON,
+		group.DateTimeLastRace,
+		0,
+	).Scan(&insertedID)
+
+	if err != nil {
+		return "", fmt.Errorf("failed to insert group: %w", err)
+	}
+
+	return insertedID, nil
+}
+
 func (g GroupStorage) UpdatePlayers(groupID string, players []entity.Player) error {
+	// Нормализуем игроков перед обновлением
+	for i := range players {
+		players[i].Normalize()
+	}
+
 	playersJSON, err := json.Marshal(players)
 	if err != nil {
 		return fmt.Errorf("failed to marshal players: %w", err)
@@ -34,43 +79,6 @@ func (g GroupStorage) UpdatePlayers(groupID string, players []entity.Player) err
 	}
 
 	return nil
-}
-
-func NewGroupStorage(pg *database.PostgresDB) *GroupStorage {
-	return &GroupStorage{
-		postgres: pg,
-	}
-}
-
-func (g GroupStorage) Create(group entity.Group) (string, error) {
-	// Сериализуем игроков в JSONB
-	playersJSON, err := json.Marshal(group.Players)
-	if err != nil {
-		return "", fmt.Errorf("failed to marshal players: %w", err)
-	}
-
-	// Вставка группы в БД
-	query := `
-		INSERT INTO groups (id, name, players, created_at, deleted_at)
-		VALUES ($1, $2, $3, $4, $5)
-		RETURNING id;
-	`
-
-	var insertedID string
-	err = g.postgres.DB.QueryRow(
-		query,
-		group.ID,
-		group.Name,
-		playersJSON,
-		group.DateTimeLastRace,
-		0,
-	).Scan(&insertedID)
-
-	if err != nil {
-		return "", fmt.Errorf("failed to insert group: %w", err)
-	}
-
-	return insertedID, nil
 }
 
 func (g GroupStorage) GetAllGroups() ([]entity.Group, error) {

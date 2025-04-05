@@ -10,13 +10,14 @@ func (h *Handler) createGroup(c *fiber.Ctx) error {
 	var input struct {
 		Details struct {
 			Name    string          `json:"name"`
-			Players []entity.Player `json:"players"` // можно не передавать
+			Players []entity.Player `json:"players"`
 		} `json:"details"`
 	}
 
-	if err := c.BodyParser(&input); err != nil || input.Details.Name == "" {
+	if err := c.BodyParser(&input); err != nil {
+		h.log.Error().Err(err).Msg("BodyParser failed")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid group data",
+			"message": "Invalid JSON body",
 		})
 	}
 

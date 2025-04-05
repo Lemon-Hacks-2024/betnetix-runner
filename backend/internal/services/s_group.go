@@ -34,13 +34,15 @@ func (s *GroupService) GetRandomPlayers() ([]entity.Player, error) {
 		player := entity.Player{
 			ID:            uuid.New().String(),
 			Name:          "Игрок " + string(rune('A'+i)),
-			Number:        string(rune('1' + i)),
+			Number:        i + 1,
 			Color:         defaultHexColors[i%len(defaultHexColors)],
 			ReactionTime:  0.1 + rand.Float64()*(0.3-0.1),    // Реакция в диапазоне 0.1 до 0.3 секунд
 			Acceleration:  8 + rand.Float64()*(12-7),         // Ускорение от 8 до 12 м/с²
 			MaxSpeed:      10 + rand.Float64()*(12-10),       // Максимальная скорость от 10 до 12 м/с
 			CoffSpeedLoos: 0.01 + rand.Float64()*(0.05-0.01), // Коэффициент потери скорости от 0.01 до 0.05
 		}
+
+		player.Normalize()
 		players = append(players, player)
 	}
 
@@ -100,7 +102,7 @@ func (g GroupService) CreateGroup(group entity.Group) (string, error) {
 				GroupID:       group.ID,
 				Name:          fmt.Sprintf("Участник %d", i+1),
 				Color:         defaultHexColors[i%len(defaultHexColors)],
-				Number:        fmt.Sprintf("%d", i+1),
+				Number:        i + 1,
 				ReactionTime:  0.1 + rand.Float64()*(0.3-0.1),
 				Acceleration:  2 + rand.Float64()*3,
 				MaxSpeed:      7 + rand.Float64()*4,
