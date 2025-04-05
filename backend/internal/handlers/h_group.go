@@ -59,7 +59,6 @@ func (h *Handler) getGroups(c *fiber.Ctx) error {
 			"message": "failed to get groups",
 		})
 	}
-
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 		"details": fiber.Map{

@@ -59,8 +59,8 @@ func (h *Handler) InitRoutes(port string) {
 				races := groupId.Group("/races")
 				{
 					races.Post("/", h.newRace)
+					races.Post("/:quantity", h.creatRaces)
 				}
-
 				analytics := groupId.Group("/analytics")
 				{
 					analytics.Get("/places", h.getPlacesProbabilities)
@@ -68,10 +68,8 @@ func (h *Handler) InitRoutes(port string) {
 					analytics.Get("/top3", h.getTop3Probabilities)
 					analytics.Get("/pairs", h.getPairsProbabilities)
 				}
-
 			}
 		}
-
 		streams := api.Group("/streams")
 		{
 			streams.Get("/race", websocket.New(h.streamRaces))

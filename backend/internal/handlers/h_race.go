@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"math/rand"
+	"strconv"
 	"time"
 )
 
@@ -68,4 +69,55 @@ func generatePlayers(numPlayers int, groupID string) []entity.Player {
 	}
 
 	return players
+}
+
+func (h *Handler) creatRaces(c *fiber.Ctx) error {
+	groupId := c.Params("id")
+	if groupId == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid group id"})
+	}
+	h.log.Debug().Msgf("groupId: %s", groupId)
+
+	// Получаем количество симуляций (по умолчанию 1)
+	quantityStr := c.Params("quantity", "1")
+	quantity, err := strconv.Atoi(quantityStr)
+	if err != nil || quantity < 1 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid quantity"})
+	}
+
+	// Получаем группу с участниками
+	group, err := h.services.Group.GetGroup(groupId)
+	if err != nil {
+		h.log.Error().Err(err).Msg("failed to get group")
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed to get group",
+		})
+	}
+
+	raceIDs := make([]string, 0, quantity)
+
+	for i := 0; i < quantity; i++ {
+		race := h.services.Race.Simulate(group)
+
+		raceId, err := h.services.Race.CreateRace(race)
+		if err != nil {
+			h.log.Error().Err(err).Msgf("failed to create race #%d", i+1)
+			continue // Пропускаем неудачный забег, но продолжаем
+		}
+
+		raceIDs = append(raceIDs, raceId)
+	}
+
+	if len(raceIDs) == 0 {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed to create any races",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message":   "races created successfully",
+		"race_ids":  raceIDs,
+		"group_id":  groupId,
+		"generated": len(raceIDs),
+	})
 }

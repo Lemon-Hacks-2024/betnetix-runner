@@ -13,7 +13,7 @@ import (
 type Race interface {
 	CreateRace(race entity.Race) (string, error)
 	SetResults(race entity.Race) (string, error)
-	SimulateNRacesForGroup(group entity.Group, count int) error
+	Simulate(group entity.Group) entity.Race
 }
 
 type RaceService struct {
@@ -61,87 +61,85 @@ func (s *RaceService) SetResults(race entity.Race) (string, error) {
 	return raceId, nil
 }
 
-func (s *RaceService) SimulateNRacesForGroup(group entity.Group, count int) error {
-	if len(group.Players) == 0 {
-		return errors.New("группа не содержит участников")
-	}
-
-	for i := 0; i < count; i++ {
-		race := s.simulateInstantRace(group.ID, group.Players)
-		_, err := s.SetResults(race)
-		if err != nil {
-			s.log.Error().Err(err).Msgf("не удалось сохранить результаты забега #%d", i+1)
-			return err
-		}
-	}
-	return nil
+type resultWithTime struct {
+	entity.RaceResult
+	raceTimeSec float64
 }
 
-func (s *RaceService) simulateInstantRace(groupID string, players []entity.Player) entity.Race {
-	const trackLength = 100
-	now := time.Now().UTC().Unix()
+func (s *RaceService) Simulate(group entity.Group) entity.Race {
+	const trackLength float64 = 100
+	startTime := time.Now().Unix()
 
-	results := make([]entity.RaceResult, len(players))
-	speeds := make([]float64, len(players))
+	var results []resultWithTime
 
-	for i, p := range players {
-		speeds[i] = p.ReactionTime * p.Acceleration
-		results[i] = entity.RaceResult{PlayerId: p.ID}
-	}
+	for _, p := range group.Players {
+		// Инициализация параметров
+		distance := 0.0
+		speed := p.ReactionTime * p.Acceleration // стартовая скорость
+		timeElapsed := 0.0
 
-	var tick int64
-	finished := false
-
-	for !finished {
-		tick++
-		finished = true
-
-		for i, p := range players {
-			if results[i].Distance >= trackLength {
-				continue
-			}
-
-			// Рывок
+		// Смоделируем забег
+		for distance < trackLength {
+			// Применение случайного вырыва (в 10% случаев)
 			if rand.Float64() < 0.1 {
-				speeds[i] += p.MaxSpeed * 0.2
+				speed += p.MaxSpeed * 0.2
 			}
 
-			// Разгон или замедление
-			if speeds[i] < p.MaxSpeed {
-				speeds[i] += p.Acceleration
-				if speeds[i] > p.MaxSpeed {
-					speeds[i] = p.MaxSpeed
+			// Ускорение до max speed
+			if speed < p.MaxSpeed {
+				speed += p.Acceleration
+				if speed > p.MaxSpeed {
+					speed = p.MaxSpeed
 				}
 			} else {
-				speeds[i] *= (1 - p.CoffSpeedLoos)
+				speed *= (1 - p.CoffSpeedLoos)
 			}
 
-			newDistance := float64(results[i].Distance) + speeds[i]
-			if newDistance >= trackLength {
-				results[i].Distance = trackLength
-				results[i].FinishedAt = now + tick
-			} else {
-				results[i].Distance = int64(newDistance)
-				finished = false
-			}
-			results[i].CurrentSpeed = int64(speeds[i])
+			// Считаем перемещение за 1 секунду
+			distance += speed
+			timeElapsed += 1
 		}
+
+		results = append(results, resultWithTime{
+			RaceResult: entity.RaceResult{
+				PlayerId:     p.ID,
+				Distance:     int64(trackLength),
+				RaceTime:     int64(timeElapsed),
+				FinishedAt:   startTime + int64(timeElapsed),
+				CurrentSpeed: int64(speed),
+			},
+			raceTimeSec: timeElapsed,
+		})
 	}
 
-	// Позиции
+	// Определяем позиции по времени
 	sort.Slice(results, func(i, j int) bool {
-		return results[i].Distance > results[j].Distance
+		return results[i].raceTimeSec < results[j].raceTimeSec
 	})
 	for i := range results {
 		results[i].Position = i + 1
-		results[i].RaceTime = results[i].FinishedAt - now
+	}
+
+	// Преобразуем в обычный []RaceResult
+	finalResults := make([]entity.RaceResult, len(results))
+	for i, r := range results {
+		finalResults[i] = r.RaceResult
 	}
 
 	return entity.Race{
-		Id:         "",
-		GroupId:    groupID,
-		Results:    results,
-		StartedAt:  now,
-		FinishedAt: now + tick,
+		GroupId:    group.ID,
+		StartedAt:  startTime,
+		FinishedAt: startTime + int64(maxRaceTime(results)),
+		Results:    finalResults,
 	}
+}
+
+func maxRaceTime(results []resultWithTime) float64 {
+	max := 0.0
+	for _, r := range results {
+		if r.raceTimeSec > max {
+			max = r.raceTimeSec
+		}
+	}
+	return max
 }
