@@ -12,4 +12,5 @@ export const TextsMain = {
   statisticRaces: "Статистика забегов",
   chartPosition: "График по местам",
   chartTime: "График по времени",
+  advancedSettings: "Расширенные настройки",
 };
