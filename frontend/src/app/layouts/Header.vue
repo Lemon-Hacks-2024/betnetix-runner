@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {
   EntranceButton,
+  LanguageToggle,
   LogoTitle,
   MenuButtons,
   ThemeToggle,
@@ -13,9 +14,10 @@ import {
       <a-flex justify="space-between" align="center">
         <LogoTitle />
         <a-flex align="center" :gap="30">
-          <ThemeToggle />
-          <div class="divider" />
           <MenuButtons />
+          <div class="divider" />
+          <LanguageToggle />
+          <ThemeToggle />
           <div class="divider" />
           <EntranceButton />
         </a-flex>

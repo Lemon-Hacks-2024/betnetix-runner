@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
 import { BaseNeumorphic } from "@/shared/ui";
-import LightModeIcon from "@/assets/icons/LightModeIcon.vue";
-import DarkModeIcon from "@/assets/icons/DarkModeIcon.vue";
 import { usePreferencesStore } from "@/entities/preferences";
 
-const { isDark } = storeToRefs(usePreferencesStore());
-const { toggleTheme } = usePreferencesStore();
+const { isRu } = storeToRefs(usePreferencesStore());
+const { toggleLanguage } = usePreferencesStore();
 </script>
 
 <template>
@@ -19,9 +17,9 @@ const { toggleTheme } = usePreferencesStore();
     inset
     hover
   >
-    <div class="toggle" @click="toggleTheme">
-      <div class="circle" :class="{ active: isDark }">
-        <component :is="isDark ? DarkModeIcon : LightModeIcon" class="icon" />
+    <div class="toggle" @click="toggleLanguage">
+      <div class="circle" :class="{ active: isRu }">
+        <span class="label">{{ isRu ? "РУ" : "EN" }} </span>
       </div>
     </div>
   </BaseNeumorphic>
@@ -51,10 +49,8 @@ const { toggleTheme } = usePreferencesStore();
   transition: left 0.2s ease-in-out;
   box-shadow: 3px 3px 6px rgba(#000000, 0.4), -3px -3px 6px rgba(#ffffff, 0.08);
 
-  .icon {
-    width: 18px;
-    height: 18px;
-    fill: var(--text-color);
+  .label {
+    font-weight: bold;
   }
 }
 

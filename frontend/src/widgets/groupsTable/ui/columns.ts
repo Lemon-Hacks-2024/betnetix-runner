@@ -1,12 +1,13 @@
-import GlobalTexts from "@/app/locale";
+import { useTexts } from "@/app/locale/model";
 
+const { $t } = useTexts();
 export const columns = [
   {
-    title: GlobalTexts.main.title,
+    title: $t.value.main.title,
     dataIndex: "name",
   },
   {
-    title: GlobalTexts.main.lastRace,
+    title: $t.value.main.lastRace,
     dataIndex: "date_time_last_race",
   },
 ];

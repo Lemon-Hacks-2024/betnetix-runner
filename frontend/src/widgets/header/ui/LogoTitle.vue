@@ -3,9 +3,14 @@ import { storeToRefs } from "pinia";
 import { BaseNeumorphic } from "@/shared/ui";
 import DarkLogo from "@/assets/images/DarkLogo.webp";
 import LightLogo from "@/assets/images/LightLogo.webp";
-import { useThemeStore } from "@/entities/theme";
+import { usePreferencesStore } from "@/entities/preferences";
+import { useRouter } from "vue-router";
 
-const { isDark } = storeToRefs(useThemeStore());
+const { isDark } = storeToRefs(usePreferencesStore());
+
+const router = useRouter();
+
+const routeTo = () => router.push("/");
 </script>
 
 <template>
@@ -17,7 +22,7 @@ const { isDark } = storeToRefs(useThemeStore());
       radius="999px"
       hover
     >
-      <div class="logo-wrapper">
+      <div class="logo-wrapper" @click="routeTo">
         <img v-if="isDark" class="logo" :src="DarkLogo" />
         <img v-else class="logo" :src="LightLogo" />
       </div>
