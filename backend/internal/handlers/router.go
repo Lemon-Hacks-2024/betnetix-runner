@@ -44,6 +44,11 @@ func (h *Handler) InitRoutes(port string) {
 			return ctx.Status(fiber.StatusOK).JSON(fiber.Map{"message": "ok"})
 		})
 
+		groups := api.Group("/groups")
+		{
+			groups.Post("/", h.createGroup)
+			groups.Get("/", h.getGroups)
+		}
 		// Upgraded websocket request
 		//api.Get("/screens/:id/content", websocket.New(func(c *websocket.Conn) {
 		//	fmt.Println(c.Locals("Host")) // "Localhost:3000"

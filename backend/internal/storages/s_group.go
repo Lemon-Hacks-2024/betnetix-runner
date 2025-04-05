@@ -37,8 +37,8 @@ func (g GroupStorage) Create(group entity.Group) (string, error) {
 		group.ID,
 		group.Name,
 		playersJSON,
-		group.DateTimeLastRace, // сохраняем как created_at
-		0,                      // deleted_at по умолчанию 0
+		group.DateTimeLastRace,
+		0,
 	).Scan(&insertedID)
 
 	if err != nil {
@@ -46,4 +46,34 @@ func (g GroupStorage) Create(group entity.Group) (string, error) {
 	}
 
 	return insertedID, nil
+}
+
+func (g GroupStorage) GetAllGroups() ([]entity.Group, error) {
+	query := `SELECT id, name, players, created_at FROM groups WHERE deleted_at = 0`
+
+	rows, err := g.postgres.DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch groups: %w", err)
+	}
+	defer rows.Close()
+
+	var groups []entity.Group
+
+	for rows.Next() {
+		var group entity.Group
+		var playersRaw []byte
+
+		err := rows.Scan(&group.ID, &group.Name, &playersRaw, &group.DateTimeLastRace)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan group row: %w", err)
+		}
+
+		if err := json.Unmarshal(playersRaw, &group.Players); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal players: %w", err)
+		}
+
+		groups = append(groups, group)
+	}
+
+	return groups, nil
 }

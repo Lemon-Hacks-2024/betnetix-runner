@@ -7,16 +7,20 @@ import (
 
 type Group interface {
 	Create(group entity.Group) (string, error)
+	GetAllGroups() ([]entity.Group, error)
+}
+
+type Race interface {
+	Create(race entity.Race) (string, error)
 }
 
 type Storage struct {
-	Group
 	Race
+	Group
 }
 
 func NewStorage(pg *database.PostgresDB, redis *database.Redis) *Storage {
 	return &Storage{
 		Group: NewGroupStorage(pg),
-		Race:  NewRaceStorage(pg, redis),
 	}
 }
