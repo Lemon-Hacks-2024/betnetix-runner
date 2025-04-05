@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useApi } from "@/shared/api";
 
+import * as ApiTypes from "./GroupsApiType";
 import * as api from "./groupsApi";
 
 export const useGroupsStore = defineStore("groups", () => {
@@ -21,15 +22,32 @@ export const useGroupsStore = defineStore("groups", () => {
     }
   );
 
+  const { loading: loadingGetGroup, execute: fetchGetGroup } = useApi(
+    api.getGroup,
+    {
+      messagesError: {
+        404: "Группа не найдена",
+      },
+    }
+  );
+
+  const { loading: loadingUpdateGroup, execute: fetchUpdateGroup } = useApi(
+    api.updateGroup
+  );
+
   return {
     // loading
     loadingRandomPlayers,
     loadingGetGroups,
     loadingCreateGroups,
+    loadingGetGroup,
+    loadingUpdateGroup,
 
     // actions
     fetchRandomPlayers,
     fetchGetGroups,
     fetchCreateGroups,
+    fetchGetGroup,
+    fetchUpdateGroup,
   };
 });

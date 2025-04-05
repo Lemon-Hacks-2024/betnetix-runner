@@ -29,3 +29,20 @@ export const createGroup = async (
 
   return res.data.details.group_id;
 };
+
+export const getGroup = async (id: string): Promise<types.Group> => {
+  const res = await api.get<ApiResponse<types.Group>>(`groups/${id}`);
+
+  return res.data.details;
+};
+
+export const updateGroup = async (
+  data: ApiTypes.UpdateGroupRequest
+): Promise<void> => {
+  await api.patch<ApiResponse<{ group_id: string }>>(
+    `groups/${data.id}/players`,
+    {
+      details: data,
+    }
+  );
+};

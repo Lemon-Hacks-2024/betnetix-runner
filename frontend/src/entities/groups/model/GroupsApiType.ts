@@ -5,3 +5,7 @@ export interface CreateGroupRequest {
   is_self: boolean;
   players: Player[];
 }
+
+export interface UpdateGroupRequest extends CreateGroupRequest {
+  id: string;
+}
