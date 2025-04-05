@@ -39,7 +39,6 @@ useCssVarsFromToken();
 </template>
 
 <style lang="scss">
-@use "./styles/vars.scss";
 @use "./styles/main.scss";
 @use "./styles/custom.scss";
 </style>

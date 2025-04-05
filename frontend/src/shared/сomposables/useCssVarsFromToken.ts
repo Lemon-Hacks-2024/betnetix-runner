@@ -11,15 +11,6 @@ export const useCssVarsFromToken = () => {
     const t = token.value;
 
     root.style.setProperty("--bg-color", t.colorBgLayout);
-    if (isDark.value) {
-      root.style.setProperty("--shadow-dark", "rgba(0, 0, 0, 0.6)");
-      root.style.setProperty("--shadow-light", "rgba(255, 255, 255, 0.04)");
-      root.style.setProperty("--shadow-border", "rgba(255, 255, 255, 0.1)");
-    } else {
-      root.style.setProperty("--shadow-dark", "rgba(0, 0, 0, 0.1)");
-      root.style.setProperty("--shadow-light", "rgba(255, 255, 255, 0.5)");
-      root.style.setProperty("--shadow-border", "rgba(0, 0, 0, 0.06)");
-    }
     root.style.setProperty("--primary-color", t.colorPrimary);
     root.style.setProperty("--element-color", t.colorBgContainer);
     root.style.setProperty(
@@ -32,6 +23,11 @@ export const useCssVarsFromToken = () => {
     );
     root.style.setProperty("--accent-color", t.colorInfo);
     root.style.setProperty("--text-color", t.colorTextBase);
+
+    root.style.setProperty("--shadow-dark", t.shadowDark);
+    root.style.setProperty("--shadow-light", t.shadowLight);
+    root.style.setProperty("--shadow-border", t.shadowBorder);
+
     root.style.setProperty("--error-color", t.colorError);
     root.style.setProperty("--success-color", t.colorSuccess);
   });

@@ -18,9 +18,7 @@ const { isDark } = storeToRefs(useThemeStore());
           width="100px"
           height="100px"
           radius="999px"
-          padding="20px"
           hover
-          border
         >
           <div class="logo-wrapper">
             <img v-if="isDark" class="logo" :src="DarkLogo" />
@@ -70,11 +68,6 @@ const { isDark } = storeToRefs(useThemeStore());
       justify-content: center;
       width: 100%;
       height: 100%;
-    }
-
-    .title {
-      color: var(--primary-color);
-      font-weight: bold;
     }
 
     .logo {

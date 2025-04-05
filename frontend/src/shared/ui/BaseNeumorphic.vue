@@ -36,7 +36,6 @@ defineProps<{
 
 <style lang="scss" scoped>
 .neumorphic {
-  background: var(--element-color);
   position: relative;
 
   &.flat {
