@@ -1,4 +1,5 @@
 @use "transition";
+@use "colorPicker";
 
 html,
 body {
@@ -16,4 +17,14 @@ body {
   src: url("@/assets/fonts/Jura") format("truetype");
   font-weight: normal;
   font-style: normal;
+}
+
+
+.ant-btn-primary,
+.ant-btn-default {
+  box-shadow: none;
+}
+
+.anticon svg {
+  vertical-align: baseline;
 }

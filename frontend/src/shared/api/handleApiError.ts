@@ -20,9 +20,7 @@ export const handleApiError = (error: unknown): ApiError => {
     axiosError.message;
 
   const unknownError: ApiError = {
-    code: axiosError.status || 0,
     message,
-    error: "unknown_error",
   };
 
   console.error("Unknown Error:", error);

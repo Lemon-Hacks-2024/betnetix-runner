@@ -8,4 +8,13 @@ export const routes = [
     },
     component: () => import("@/pages/main"),
   },
+  {
+    path: "/group/:groupId",
+    name: "group",
+    meta: {
+      layout: "main",
+      title: "Группа",
+    },
+    component: () => import("@/pages/group"),
+  },
 ];

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/",
+  baseURL: "https://stage.ui-platform.ru/api-hack/v1",
   headers: {
     "Content-Type": "application/json",
   },
