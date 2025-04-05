@@ -10,10 +10,6 @@ type Group interface {
 	GetAllGroups() ([]entity.Group, error)
 }
 
-type Race interface {
-	Create(race entity.Race) (string, error)
-}
-
 type Storage struct {
 	Race
 	Group

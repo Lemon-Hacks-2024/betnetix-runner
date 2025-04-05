@@ -11,10 +11,6 @@ type Group interface {
 	GetGroups() ([]entity.Group, error)
 }
 
-type Race interface {
-	CreateRace(race entity.Race) (string, error)
-}
-
 type Service struct {
 	Group
 	Race
