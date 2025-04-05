@@ -46,3 +46,14 @@ export const updateGroup = async (
     }
   );
 };
+
+// export const updateGroup = async (
+//   data: ApiTypes.UpdateGroupRequest
+// ): Promise<void> => {
+//   await api.patch<ApiResponse<{ group_id: string }>>(
+//     `/groups/:id/races/:quantity`,
+//     {
+//       details: data,
+//     }
+//   );
+// };

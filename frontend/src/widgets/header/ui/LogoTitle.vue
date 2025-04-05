@@ -27,7 +27,7 @@ const routeTo = () => router.push("/");
         <img v-else class="logo" :src="LightLogo" />
       </div>
     </BaseNeumorphic>
-    <span class="title">ЧТО_ТА</span>
+    <span class="title">LEMONRUN</span>
   </a-flex>
 </template>
 
@@ -47,7 +47,7 @@ const routeTo = () => router.push("/");
 }
 
 .title {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bolder;
 }
 </style>

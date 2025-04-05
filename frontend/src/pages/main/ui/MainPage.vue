@@ -5,6 +5,7 @@ import { useTexts } from "@/app/locale/model";
 
 import CreateGroup from "@/widgets/createGroup";
 import GroupsTable from "@/widgets/groupsTable";
+import { BaseNeumorphic } from "@/shared/ui";
 
 const openCreateGroup = ref(false);
 
@@ -15,14 +16,16 @@ const { $t } = useTexts();
   <div class="main-page-wrapper">
     <a-card class="table-wrapper" :bordered="false">
       <template #extra>
-        <a-button
-          class="card-btn"
-          type="primary"
-          :icon="h(PlusOutlined)"
-          @click="openCreateGroup = true"
-        >
-          {{ $t.buttons.createGroup }}
-        </a-button>
+        <BaseNeumorphic pressable primary hover>
+          <a-button
+            class="card-btn"
+            type="primary"
+            :icon="h(PlusOutlined)"
+            @click="openCreateGroup = true"
+          >
+            {{ $t.buttons.createGroup }}
+          </a-button>
+        </BaseNeumorphic>
       </template>
 
       <CreateGroup v-model:open="openCreateGroup" />
@@ -33,17 +36,27 @@ const { $t } = useTexts();
 </template>
 
 <style lang="scss" scoped>
-.table-wrapper {
-  border-radius: 40px;
+.main-page-wrapper {
+  border-radius: 30px;
+  box-shadow: 0 4px 10px var(--shadow-dark);
+  overflow: hidden;
 
-  .card-btn {
-    height: fit-content;
-    padding: 8px 20px;
-    border-radius: 16px;
+  .table-wrapper {
+    background-color: var(--opacity-element-color);
+
+    .card-btn {
+      height: fit-content;
+      padding: 8px 20px;
+      border-radius: 12px;
+    }
+
+    :deep(.ant-card-head) {
+      padding: 18px;
+    }
   }
 
-  :deep(.ant-card-head) {
-    padding: 18px;
+  .table-container {
+    width: 100%;
   }
 }
 </style>

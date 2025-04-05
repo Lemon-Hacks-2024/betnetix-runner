@@ -15,7 +15,7 @@ const routeTo = (path: string) => router.push(path);
 </script>
 
 <template>
-  <BaseNeumorphic pressable>
+  <BaseNeumorphic pressable :hover="!disabled">
     <a-button
       type="text"
       :class="['menu-btn', { active: active }]"

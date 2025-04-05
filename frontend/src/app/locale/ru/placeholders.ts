@@ -7,4 +7,5 @@ export const TextsPlaceholders = {
   enterAcceleration: "Введите ускорение",
   enterSpeed: "Введите скорость",
   enterCoff: "Введите коэффициент",
+  enterRacesCount: "Укажите количество забегов",
 };

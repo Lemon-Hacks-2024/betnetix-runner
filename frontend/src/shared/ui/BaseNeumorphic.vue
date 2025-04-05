@@ -7,6 +7,7 @@ const props = defineProps<{
   pressable?: boolean;
   variant?: "flat" | "soft" | "neu";
   inset?: boolean;
+  primary?: boolean;
   glass?: boolean;
   border?: boolean;
   reverse?: boolean;
@@ -34,6 +35,7 @@ const onRelease = () => {
         inset: inset || (pressable && isPressed),
         pressed: pressable && isPressed,
         glass,
+        primary,
         'has-border': border,
         'has-hover': hover,
         reverse,
@@ -95,6 +97,21 @@ const onRelease = () => {
   &.has-hover:hover {
     box-shadow: 8px 8px 16px var(--shadow-dark),
       -8px -8px 16px var(--shadow-light);
+  }
+
+  &.primary {
+    box-shadow: 6px 6px 10px var(--shadow-dark),
+      -6px -6px 10px var(--shadow-light);
+
+    &.inset {
+      box-shadow: inset 4px 4px 6px var(--shadow-dark),
+        inset -4px -4px 6px var(--shadow-light);
+    }
+
+    &.has-hover:hover {
+      box-shadow: 8px 8px 12px var(--shadow-dark),
+        -8px -8px 12px var(--shadow-light);
+    }
   }
 
   &.inset.has-hover:hover {

@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { useGroupsStore, Group } from "@/entities/groups";
 import StatisticsGroup from "@/widgets/statisticsGroup";
 import Skeleton from "./Skeleton.vue";
+import ControlBar from "@/widgets/controlBar";
 
 const route = useRoute();
 const router = useRouter();
@@ -42,6 +43,7 @@ watch(
       <Skeleton v-if="loadingGetGroup" />
 
       <a-flex v-else vertical :gap="30">
+        <ControlBar />
         <StatisticsGroup />
       </a-flex>
     </Transition>

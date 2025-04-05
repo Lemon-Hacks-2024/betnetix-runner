@@ -11,4 +11,5 @@ export const TextsMain = {
   statisticRaces: "Race statistics",
   chartPosition: "Schedule by location",
   chartTime: "Time schedule",
+  advancedSettings: "Advanced settings",
 };
