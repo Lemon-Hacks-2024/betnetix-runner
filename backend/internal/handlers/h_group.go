@@ -55,7 +55,7 @@ func (h *Handler) getGroups(c *fiber.Ctx) error {
 	groups, err := h.services.Group.GetGroups()
 	if err != nil {
 		h.log.Error().Err(err).Msg("failed to get groups")
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "failed to get groups",
 		})
 	}
