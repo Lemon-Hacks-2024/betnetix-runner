@@ -81,7 +81,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 	//
 
 	finished := false
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(500 * time.Millisecond)
 	defer ticker.Stop()
 
 	for range ticker.C {
