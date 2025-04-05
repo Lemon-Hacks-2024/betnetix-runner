@@ -26,8 +26,6 @@ func (h *Handler) newRace(c *fiber.Ctx) error {
 		})
 	}
 
-	//players := generatePlayers(6, groupId)
-
 	group, err := h.services.Group.GetGroup(groupId)
 	if err != nil {
 		h.log.Error().Err(err).Msg("failed to get group")

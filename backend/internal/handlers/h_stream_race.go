@@ -99,6 +99,8 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 					race.Results[i].Distance = int64(newDistance)
 					allFinished = false
 				}
+
+				race.Results[i].CurrentSpeed = int64(currentSpeeds[i])
 			}
 		}
 
