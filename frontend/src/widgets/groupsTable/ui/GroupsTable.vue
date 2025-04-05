@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useRouter } from "vue-router";
+import { ExportOutlined } from "@ant-design/icons-vue";
 
 import { CellDate } from "@/shared/ui";
 import { GroupsType } from "@/entities/groups";
@@ -30,11 +31,12 @@ const test = (record: GroupsType) => {
     :customRow="test"
   >
     <template #bodyCell="{ column, text }">
-      <!-- <template v-if="column.dataIndex === 'name'">
-        <a-button @click="$router.push(`/group/${record.id}`)" type="text">
-          {{ record.name }}
-        </a-button>
-      </template> -->
+      <template v-if="column.dataIndex === 'name'">
+        <a-space :size="16">
+          <ExportOutlined class="opacity-50" />
+          <span>{{ text }}</span>
+        </a-space>
+      </template>
 
       <template v-if="column.dataIndex === 'date_time_last_race'">
         <CellDate :date="text" />
