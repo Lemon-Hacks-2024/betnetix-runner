@@ -60,6 +60,13 @@ func (h *Handler) InitRoutes(port string) {
 				{
 					races.Post("/", h.newRace)
 				}
+
+				analytics := groupId.Group("/analytics")
+				{
+					analytics.Get("/places", h.getPlacesProbabilities)
+					// analytics.Get("/tops", h.getTopProbabilities)
+				}
+
 			}
 		}
 
