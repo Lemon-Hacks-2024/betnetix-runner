@@ -16,7 +16,7 @@ const openCreateGroup = ref(false);
         type="primary"
         :icon="h(PlusOutlined)"
       >
-        Создать группу
+        {{ $t.buttons.createGroup }}
       </a-button>
     </a-flex>
 

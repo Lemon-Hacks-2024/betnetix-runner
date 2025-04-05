@@ -52,25 +52,25 @@ const sendForm = async () => {
 
 <template>
   <a-modal
-    v-model:open="open"
-    title="Создание группы"
-    ok-text="Создать"
     class="!w-[850px]"
+    v-model:open="open"
+    :title="$t.main.groupCreating"
+    :ok-text="$t.buttons.create"
     @ok="sendForm"
     :ok-button-props="{ loading: loadingCreateGroups }"
   >
     <a-form ref="formRef" :model="formData" :rules="rules" layout="vertical">
-      <a-form-item name="name" label="Название группы">
+      <a-form-item name="name" :label="$t.labels.groupNameLabel">
         <a-input
           v-model:value="formData.name"
-          placeholder="Введите название группы"
+          :placeholder="$t.placeholders.enterGroupTitle"
         />
       </a-form-item>
 
-      <a-form-item name="is_self" label="Указать свои параметры">
+      <a-form-item name="is_self" :label="$t.labels.groupNameLabel">
         <template #tooltip>
           <FormItemTooltip>
-            По умолчанию параметры учеников будут рандомными
+            {{ $t.main.randomByDefault }}
           </FormItemTooltip>
         </template>
 
@@ -83,18 +83,18 @@ const sendForm = async () => {
             <a-flex :gap="12">
               <a-form-item
                 :name="['players', i, 'name']"
-                :label="i == 0 ? 'Имя' : ''"
+                :label="i == 0 ? $t.labels.groupNameLabel : ''"
                 :rules="rulesPlayers"
                 class="player-input"
               >
                 <a-input
                   v-model:value="player.name"
-                  placeholder="Введите имя"
+                  :placeholder="$t.placeholders.enterName"
                 />
               </a-form-item>
               <a-form-item
                 :name="['players', i, 'color']"
-                :label="i == 0 ? 'Цвет' : ''"
+                :label="i == 0 ? $t.labels.colorLabel : ''"
                 :rules="rulesPlayers"
                 class="player-input"
               >
@@ -106,7 +106,10 @@ const sendForm = async () => {
                     />
                   </template>
 
-                  <a-input :value="player.color" placeholder="Выберите цвет">
+                  <a-input
+                    :value="player.color"
+                    :placeholder="$t.placeholders.chooseColor"
+                  >
                     <template #prefix>
                       <div
                         class="color-preview"
@@ -119,25 +122,30 @@ const sendForm = async () => {
 
               <a-form-item
                 :name="['players', i, 'number']"
-                :label="i == 0 ? 'Номер' : ''"
+                :label="i == 0 ? $t.labels.numberLabel : ''"
                 :rules="rulesPlayers"
                 class="player-input"
               >
                 <template #tooltip>
-                  <FormItemTooltip> Номер от 1 до 99 </FormItemTooltip>
+                  <FormItemTooltip>
+                    {{ $t.main.numberFromTo }}
+                  </FormItemTooltip>
                 </template>
 
                 <a-input-number
                   v-model:value="player.number"
                   :min="1"
                   :max="99"
-                  placeholder="Введите номер"
+                  :placeholder="$t.placeholders.enterNumber"
                   class="!w-full"
                 />
               </a-form-item>
 
               <a-form-item :label="i == 0 ? ' ' : ''">
-                <a-tooltip placement="right" title="Расширенные настройки">
+                <a-tooltip
+                  placement="right"
+                  :title="$t.popovers.advancedSettings"
+                >
                   <a-button
                     @click="updateAdvancedRow(i)"
                     :icon="h(MoreOutlined)"
@@ -148,20 +156,20 @@ const sendForm = async () => {
 
             <Transition
               name="collapse"
-              @before-enter="beforeEnter"
-              @enter="enter"
-              @leave="leave"
+              @before-enter="beforeEnter!"
+              @enter="enter!"
+              @leave="leave!"
             >
               <div v-if="advancedRow === i" class="row-advanced-wrapper">
                 <a-flex v-if="advancedRow === i" :gap="12" class="row-advanced">
                   <a-form-item
                     :name="['players', i, 'reaction_time']"
-                    label="Время реакции"
+                    :label="$t.labels.reactionTimeLabel"
                     :rules="rulesPlayers"
                   >
                     <template #tooltip>
                       <FormItemTooltip>
-                        Время реакции на страте. В секундах, диапазон 0.1-0.3
+                        {{ $t.main.reactionTimeOnStart }}
                       </FormItemTooltip>
                     </template>
 
@@ -170,7 +178,7 @@ const sendForm = async () => {
                       :min="0.1"
                       :max="0.3"
                       :step="0.02"
-                      placeholder="Введите время"
+                      :placeholder="$t.placeholders.enterTime"
                     >
                       <template #addonAfter>сек</template>
                     </a-input-number>
@@ -178,13 +186,12 @@ const sendForm = async () => {
 
                   <a-form-item
                     :name="['players', i, 'acceleration']"
-                    label="Ускорение"
+                    :label="$t.labels.accelerationLabel"
                     :rules="rulesPlayers"
                   >
                     <template #tooltip>
                       <FormItemTooltip>
-                        Начальная фаза забега. Рекомендуемые значения от 8 до 12
-                        м/с<sup>2</sup>
+                        {{ $t.main.startingPhase }}<sup>2</sup>
                       </FormItemTooltip>
                     </template>
 
@@ -192,7 +199,7 @@ const sendForm = async () => {
                       v-model:value="player.acceleration"
                       :min="1"
                       :max="20"
-                      placeholder="Введите ускорение"
+                      :placeholder="$t.placeholders.enterAcceleration"
                     >
                       <template #addonAfter>м/с<sup>2</sup></template>
                     </a-input-number>
@@ -200,18 +207,18 @@ const sendForm = async () => {
 
                   <a-form-item
                     :name="['players', i, 'max_speed']"
-                    label="Макс. скорость"
+                    :label="$t.labels.maxSpeedLabel"
                     :rules="rulesPlayers"
                   >
                     <template #tooltip>
                       <FormItemTooltip>
-                        Рекомендуемые значения от 10 до 12 м/с
+                        {{ $t.main.recommendedValues }}
                       </FormItemTooltip>
                     </template>
 
                     <a-input-number
                       v-model:value="player.max_speed"
-                      placeholder="Введите скорость"
+                      :placeholder="$t.placeholders.enterSpeed"
                       :min="1"
                       :max="20"
                     >
@@ -221,13 +228,12 @@ const sendForm = async () => {
 
                   <a-form-item
                     :name="['players', i, 'coff_speed_loss']"
-                    label="Коэф. потери"
+                    :label="$t.labels.coffSpeedLossLabel"
                     :rules="rulesPlayers"
                   >
                     <template #tooltip>
                       <FormItemTooltip>
-                        Коэф. потери скорости на финальной стадии. Рекомендуемые
-                        значения от 1 до 5%
+                        {{ $t.main.coffOnFinalPhase }}
                       </FormItemTooltip>
                     </template>
 
@@ -236,7 +242,7 @@ const sendForm = async () => {
                       @update:value="
                         Math.round((player.coff_speed_loss = $event / 100))
                       "
-                      placeholder="Введите коэффициент"
+                      :placeholder="$t.placeholders.enterCoff"
                       :min="1"
                       :max="10"
                       :rules="rulesPlayers"
