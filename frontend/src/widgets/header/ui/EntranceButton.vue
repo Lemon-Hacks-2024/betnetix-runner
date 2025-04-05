@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { h } from "vue";
 import { BaseNeumorphic } from "@/shared/ui";
+import { useTexts } from "@/app/locale/model";
 
 import LockIcon from "@/assets/icons/LockIcon.vue";
+const { $t } = useTexts();
 </script>
 
 <template>

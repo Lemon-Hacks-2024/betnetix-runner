@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { useRoute } from "vue-router";
 import MenuButton from "./MenuButton.vue";
+import { useTexts } from "@/app/locale/model";
 
 const route = useRoute();
 
 const isActiveRoute = (routePath: string) => route.path === routePath;
+const { $t } = useTexts();
 </script>
 
 <template>

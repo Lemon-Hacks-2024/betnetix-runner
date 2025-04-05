@@ -10,10 +10,7 @@ export const initTexts = (app: App) => {
   const { $t } = useTexts();
   const { language } = storeToRefs(usePreferencesStore());
 
-  // Глобально — $t.value
-  watch($t, (val) => (app.config.globalProperties.$t = val), {
-    immediate: true,
-  });
+  app.config.globalProperties.$t = $t.value;
 
   // dayjs — по language из стора
   watch(

@@ -6,13 +6,13 @@ import Header from "./Header.vue";
   <a-layout class="layout-wrapper">
     <div class="layout-container">
       <Header />
-      <router-view v-slot="{ Component }">
-        <div class="layout-content">
+      <div class="layout-content">
+        <router-view v-slot="{ Component }">
           <Transition appear>
             <component :is="Component" />
           </Transition>
-        </div>
-      </router-view>
+        </router-view>
+      </div>
     </div>
   </a-layout>
 </template>

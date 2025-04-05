@@ -1,7 +1,9 @@
 import { useTexts } from "@/app/locale/model";
+import { computed } from "vue";
 
 const { $t } = useTexts();
-export const columns = [
+
+export const columns = computed(() => [
   {
     title: $t.value.main.title,
     dataIndex: "name",
@@ -10,4 +12,4 @@ export const columns = [
     title: $t.value.main.lastRace,
     dataIndex: "date_time_last_race",
   },
-];
+]);

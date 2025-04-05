@@ -18,7 +18,22 @@ export interface Player {
   coff_speed_loss: number;
 }
 
-export interface Race {}
+export interface Race {
+  id: string;
+  group_id: string;
+  results: Result[];
+  started_at: number;
+  finished_at: number;
+}
+
+export interface Result {
+  player_id: string;
+  position: number;
+  distance: number;
+  race_time: number;
+  finish_time: number;
+  current_speed: number;
+}
 
 export interface GroupsType {
   id: number;
