@@ -59,6 +59,7 @@ func (h *Handler) InitRoutes(port string) {
 				}
 			}
 		}
+
 		// Upgraded websocket request
 		//api.Get("/screens/:id/content", websocket.New(func(c *websocket.Conn) {
 		//	fmt.Println(c.Locals("Host")) // "Localhost:3000"

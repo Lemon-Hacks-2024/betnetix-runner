@@ -8,8 +8,9 @@ import (
 
 type Race interface {
 	Create(race entity.Race) (string, error)
-	GetByGroupID(groupID string) ([]entity.Race, error)
+	GetAllByGroupId(groupID string) ([]entity.Race, error)
 	SetResults(race entity.Race) (string, error)
+	GetLastRace(groupID string) (entity.Race, error)
 }
 
 type RaceStorage struct {
@@ -34,7 +35,7 @@ func (s *RaceStorage) Create(race entity.Race) (string, error) {
 	return id, nil
 }
 
-func (s *RaceStorage) GetByGroupID(groupID string) ([]entity.Race, error) {
+func (s *RaceStorage) GetAllByGroupId(groupID string) ([]entity.Race, error) {
 	query := `SELECT id, group_id FROM races WHERE group_id = $1`
 	var races []entity.Race
 	err := s.postgres.DB.Select(&races, query, groupID)
@@ -52,4 +53,14 @@ func (s *RaceStorage) SetResults(race entity.Race) (string, error) {
 		return "", err
 	}
 	return id, nil
+}
+
+func (s *RaceStorage) GetLastRace(groupID string) (entity.Race, error) {
+	query := `SELECT id, group_id, results FROM races WHERE group_id = $1 ORDER BY started_at DESC LIMIT 1`
+	var race entity.Race
+	err := s.postgres.DB.Get(&race, query, groupID)
+	if err != nil {
+		return entity.Race{}, err
+	}
+	return race, nil
 }

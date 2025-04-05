@@ -1,10 +1,11 @@
 package entity
 
 type Race struct {
-	Id        string       `json:"id" db:"id"`
-	GroupId   string       `json:"group_id" db:"group_id"`
-	Result    []RaceResult `json:"result" db:"result"`
-	StartedAt int64        `json:"started_at" db:"started_at"`
+	Id         string       `json:"id" db:"id"`
+	GroupId    string       `json:"group_id" db:"group_id"`
+	Result     []RaceResult `json:"result" db:"result"`
+	StartedAt  int64        `json:"started_at" db:"started_at"`
+	FinishedAt int64        `json:"finished_at" db:"finished_at"`
 }
 
 type RaceResult struct {
