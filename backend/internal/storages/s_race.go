@@ -3,6 +3,8 @@ package storages
 import (
 	"backend-service/internal/entity"
 	"backend-service/pkg/database"
+	"encoding/json"
+	"fmt"
 	"time"
 )
 
@@ -11,6 +13,7 @@ type Race interface {
 	GetAllByGroupId(groupID string) ([]entity.Race, error)
 	SetResults(race entity.Race) (string, error)
 	GetLastRace(groupID string) (entity.Race, error)
+	ExistActive(groupID string) (bool, error)
 }
 
 type RaceStorage struct {
@@ -26,9 +29,14 @@ func NewRaceStorage(pg *database.PostgresDB, redis *database.Redis) *RaceStorage
 }
 
 func (s *RaceStorage) Create(race entity.Race) (string, error) {
-	query := `INSERT INTO races (id, group_id, started_at) VALUES ($1, $2, $3) RETURNING id`
+	// Сериализуем в JSONB
+	raceResultJSONB, err := json.Marshal(race.Results)
+	if err != nil {
+		return "", fmt.Errorf("failed to marshal race results: %w", err)
+	}
+	query := `INSERT INTO races (group_id, results, started_at) VALUES ($1, $2, $3) RETURNING id`
 	var id string
-	err := s.postgres.DB.QueryRow(query, race.Id, race.GroupId, time.Now().UTC().Unix()).Scan(&id)
+	err = s.postgres.DB.QueryRow(query, race.GroupId, raceResultJSONB, time.Now().UTC().Unix()).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +56,7 @@ func (s *RaceStorage) GetAllByGroupId(groupID string) ([]entity.Race, error) {
 func (s *RaceStorage) SetResults(race entity.Race) (string, error) {
 	query := `UPDATE races SET results = $1 WHERE id = $2 RETURNING id`
 	var id string
-	err := s.postgres.DB.QueryRow(query, race.Result, race.Id).Scan(&id)
+	err := s.postgres.DB.QueryRow(query, race.Results, race.Id).Scan(&id)
 	if err != nil {
 		return "", err
 	}
@@ -63,4 +71,14 @@ func (s *RaceStorage) GetLastRace(groupID string) (entity.Race, error) {
 		return entity.Race{}, err
 	}
 	return race, nil
+}
+
+func (s *RaceStorage) ExistActive(groupID string) (bool, error) {
+	query := `SELECT EXISTS (SELECT 1 FROM races WHERE group_id = $1 AND finished_at IS NULL)`
+	var exists bool
+	err := s.postgres.DB.Get(&exists, query, groupID)
+	if err != nil {
+		return false, err
+	}
+	return exists, nil
 }

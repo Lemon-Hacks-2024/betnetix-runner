@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS races
     group_id    UUID   NOT NULL,
     results     JSONB  NOT NULL,
     started_at  BIGINT NOT NULL,
-    finished_at BIGINT NOT NULL,
+    finished_at BIGINT,
     PRIMARY KEY (id)
 );
+
+DROP TABLE IF EXISTS races;

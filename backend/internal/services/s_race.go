@@ -24,6 +24,16 @@ func NewRaceService(log zerolog.Logger, storage *storages.Storage) *RaceService 
 }
 
 func (s *RaceService) CreateRace(race entity.Race) (string, error) {
+	existActiveRace, err := s.storage.Race.ExistActive(race.GroupId)
+	if err != nil {
+		s.log.Error().Msgf("error checking active race: %v", err)
+		return "", errors.New("error checking active race")
+	}
+
+	if existActiveRace {
+		return "", errors.New("active race already exists")
+	}
+
 	raceId, err := s.storage.Race.Create(race)
 	if err != nil {
 		s.log.Error().Msgf("error creating race: %v", err)
