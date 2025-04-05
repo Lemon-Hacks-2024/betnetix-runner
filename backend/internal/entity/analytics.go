@@ -20,13 +20,13 @@ type Student struct {
 }
 
 type Top2Probability struct {
-	PlayerID        string  `json:"playerId"`
-	Top2Probability float64 `json:"top2Probability"`
+	PlayerID        string  `json:"player_id"`
+	Top2Probability float64 `json:"top_probability"`
 }
 
 type Top3Probability struct {
-	PlayerID        string  `json:"playerId"`
-	Top3Probability float64 `json:"top3Probability"`
+	PlayerID        string  `json:"player_id"`
+	Top3Probability float64 `json:"top_probability"`
 }
 
 type PairChance struct {
