@@ -95,7 +95,10 @@ func (g GroupStorage) GetAllGroups() ([]entity.Group, error) {
 			ORDER BY started_at DESC
 			LIMIT 1
 		) r ON true
-		WHERE gr.deleted_at = 0;
+		WHERE gr.deleted_at = 0
+		ORDER BY 
+			COALESCE(r.finished_at, 0) DESC,
+			gr.created_at DESC;
 	`
 
 	rows, err := g.postgres.DB.Query(query)

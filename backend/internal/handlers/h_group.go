@@ -21,6 +21,13 @@ func (h *Handler) createGroup(c *fiber.Ctx) error {
 		})
 	}
 
+	if input.Details.Name == "" {
+		h.log.Warn().Msg("Group name is empty")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Group name is required",
+		})
+	}
+
 	group := entity.Group{
 		ID:               uuid.New().String(),
 		Name:             input.Details.Name,
