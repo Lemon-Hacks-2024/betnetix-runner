@@ -47,7 +47,7 @@ func (s *RaceStorage) GetAllByGroupID(groupID string) ([]entity.Race, error) {
 	query := `
 		SELECT id, group_id, results, started_at, finished_at
 		FROM races
-		WHERE group_id = $1
+		WHERE group_id = $1 AND finished_at IS NOT NULL
 		ORDER BY started_at ASC
 	`
 
