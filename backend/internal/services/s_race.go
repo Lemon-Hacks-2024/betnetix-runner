@@ -3,9 +3,13 @@ package services
 import (
 	"backend-service/internal/entity"
 	"backend-service/internal/storages"
-	"github.com/google/uuid"
+	"errors"
 	"github.com/rs/zerolog"
 )
+
+type Race interface {
+	CreateRace(race entity.Race) (string, error)
+}
 
 type RaceService struct {
 	log     zerolog.Logger
@@ -19,9 +23,12 @@ func NewRaceService(log zerolog.Logger, storage *storages.Storage) *RaceService 
 	}
 }
 
-func (s *RaceService) CreateRace(r entity.Race) (string, error) {
-	if r.ID == "" {
-		r.ID = uuid.New().String()
+func (s *RaceService) CreateRace(race entity.Race) (string, error) {
+	raceId, err := s.storage.Race.Create(race)
+	if err != nil {
+		s.log.Error().Msgf("error creating race: %v", err)
+		return "", errors.New("error creating race")
 	}
-	return s.storage.Race.Create(r)
+
+	return raceId, nil
 }

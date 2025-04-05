@@ -1,6 +1,13 @@
 package entity
 
 type Race struct {
-	ID      string `json:"id" db:"id"`
-	GroupID string `json:"group_id" db:"group_id"` // Foreign key to group
+	Id        string       `json:"id" db:"id"`
+	GroupId   string       `json:"group_id" db:"group_id"`
+	Result    []RaceResult `json:"result" db:"result"`
+	StartedAt int64        `json:"started_at" db:"started_at"`
+}
+
+type RaceResult struct {
+	PlayerId   string `json:"player_id" db:"player_id"`
+	FinishTime int64  `json:"finish_time" db:"finish_time"`
 }

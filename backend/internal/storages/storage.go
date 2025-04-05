@@ -9,18 +9,14 @@ type Group interface {
 	Create(group entity.Group) (string, error)
 }
 
-type Race interface {
-	Create(race entity.Race) (string, error)
-}
-
 type Storage struct {
-	Race
 	Group
+	Race
 }
 
 func NewStorage(pg *database.PostgresDB, redis *database.Redis) *Storage {
 	return &Storage{
 		Group: NewGroupStorage(pg),
-		//Race:  NewRaceStorage(postgres),
+		Race:  NewRaceStorage(pg, redis),
 	}
 }
