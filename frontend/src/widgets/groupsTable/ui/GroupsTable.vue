@@ -27,8 +27,8 @@ const test = (record: GroupsType) => {
     :columns="columns"
     :pagination="pagination"
     :loading="loadingGetGroups"
-    size="small"
     :customRow="test"
+    size="small"
   >
     <template #bodyCell="{ column, text }">
       <template v-if="column.dataIndex === 'name'">

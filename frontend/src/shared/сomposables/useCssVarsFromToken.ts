@@ -1,10 +1,10 @@
 import { watchEffect } from "vue";
-import { useThemeStore } from "@/entities/theme";
+import { usePreferencesStore } from "@/entities/preferences";
 import { storeToRefs } from "pinia";
-import { themeTokens } from "@/entities/theme/model";
+import { themeTokens } from "@/entities/preferences/model";
 
 export const useCssVarsFromToken = () => {
-  const { isDark, token } = storeToRefs(useThemeStore());
+  const { isDark, token } = storeToRefs(usePreferencesStore());
 
   watchEffect(() => {
     const root = document.documentElement;
