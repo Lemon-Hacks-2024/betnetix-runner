@@ -112,24 +112,11 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 			race.Results[pos].Position = pos + 1
 		}
 
-		// Отправка текущего состояния забега
-		//msg, _ := json.Marshal(fiber.Map{
-		//	"message": "update",
-		//	"details": race,
-		//})
-
-		// TEST START
-		events := map[string]interface{}{}
-		for _, result := range race.Results {
-			events[result.PlayerId] = result
-		}
+		//Отправка текущего состояния забега
 		msg, _ := json.Marshal(fiber.Map{
 			"message": "update",
-			"details": fiber.Map{
-				"results": events,
-			},
+			"details": race,
 		})
-		// TEST END
 
 		groupSubscribers[groupId].BroadcastMessage(websocket.TextMessage, msg)
 
