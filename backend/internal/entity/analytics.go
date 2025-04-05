@@ -18,3 +18,8 @@ type Student struct {
 	SpeedLossCoef float64
 	RaceTime      float64
 }
+
+type Top2Probability struct {
+	PlayerID        string  `json:"playerId"`
+	Top2Probability float64 `json:"top2Probability"`
+}

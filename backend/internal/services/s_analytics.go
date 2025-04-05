@@ -154,3 +154,93 @@ func randFloat64() float64 {
 	// math/rand is not seeded outside of main, so we use time-based fallback
 	return float64(time.Now().UnixNano()%1e6) / 1e6
 }
+
+func (a AnalyticsService) GetTopsProbabilities(groupID string) ([]entity.Top2Probability, error) {
+	group, err := a.storage.Group.GetById(groupID)
+	if err != nil {
+		a.log.Error().Err(err).Msg("failed to get group")
+		return nil, fmt.Errorf("failed to get group: %w", err)
+	}
+
+	if len(group.Players) == 0 {
+		return nil, fmt.Errorf("group has no players")
+	}
+
+	playerResults := make(map[string][]entity.RaceResult)
+	for _, race := range group.Races {
+		for _, result := range race.Results {
+			playerResults[result.PlayerId] = append(playerResults[result.PlayerId], result)
+		}
+	}
+
+	var students []entity.Student
+	for _, player := range group.Players {
+		results := playerResults[player.ID]
+
+		var avgRaceTime float64
+		if len(results) > 0 {
+			var total int64
+			for _, res := range results {
+				total += res.RaceTime
+			}
+			avgRaceTime = float64(total) / float64(len(results)) / 1000.0
+		}
+
+		students = append(students, entity.Student{
+			Name:          player.ID,
+			ReactionTime:  player.ReactionTime,
+			Acceleration:  player.Acceleration,
+			MaxSpeed:      player.MaxSpeed,
+			SpeedLossCoef: player.CoffSpeedLoos,
+			RaceTime:      avgRaceTime,
+		})
+	}
+
+	results := performTop2NRaces(students, 1000)
+
+	return results, nil
+}
+
+func performTop2NRaces(students []entity.Student, N int) []entity.Top2Probability {
+	type stats struct {
+		Top2Count int
+	}
+
+	statsMap := make(map[string]*stats)
+	originals := make([]entity.Student, len(students))
+	copy(originals, students)
+
+	for _, s := range students {
+		statsMap[s.Name] = &stats{}
+	}
+
+	for race := 0; race < N; race++ {
+		for i := range students {
+			base := originals[i]
+			students[i].ReactionTime = jitter(base.ReactionTime, 0.05)
+			students[i].Acceleration = jitter(base.Acceleration, 0.05)
+			students[i].MaxSpeed = jitter(base.MaxSpeed, 0.05)
+			students[i].SpeedLossCoef = jitter(base.SpeedLossCoef, 0.05)
+		}
+
+		result := simulateRace(students)
+		if len(result) >= 2 {
+			statsMap[result[0].Name].Top2Count++
+			statsMap[result[1].Name].Top2Count++
+		}
+	}
+
+	total := float64(N)
+	epsilon := 1.0
+
+	var output []entity.Top2Probability
+	for _, s := range students {
+		count := float64(statsMap[s.Name].Top2Count)
+		prob := (count + epsilon*2) / (total + epsilon*float64(len(students)))
+		output = append(output, entity.Top2Probability{
+			PlayerID:        s.Name,
+			Top2Probability: prob,
+		})
+	}
+	return output
+}

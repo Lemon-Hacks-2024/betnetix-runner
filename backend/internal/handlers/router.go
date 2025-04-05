@@ -64,7 +64,7 @@ func (h *Handler) InitRoutes(port string) {
 				analytics := groupId.Group("/analytics")
 				{
 					analytics.Get("/places", h.getPlacesProbabilities)
-					// analytics.Get("/tops", h.getTopProbabilities)
+					analytics.Get("/tops", h.getTopProbabilities)
 				}
 
 			}

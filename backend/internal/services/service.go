@@ -16,6 +16,7 @@ type Group interface {
 
 type Analytics interface {
 	GetPlaceProbabilities(groupID string) ([]entity.PlaceProbability, error)
+	GetTopsProbabilities(groupID string) ([]entity.Top2Probability, error)
 }
 
 type Service struct {
