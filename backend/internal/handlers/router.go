@@ -64,7 +64,9 @@ func (h *Handler) InitRoutes(port string) {
 				analytics := groupId.Group("/analytics")
 				{
 					analytics.Get("/places", h.getPlacesProbabilities)
-					analytics.Get("/tops", h.getTopProbabilities)
+					analytics.Get("/top2", h.getTop2Probabilities)
+					analytics.Get("/top3", h.getTop3Probabilities)
+					analytics.Get("/pairs", h.getPairsProbabilities)
 				}
 
 			}
@@ -74,9 +76,7 @@ func (h *Handler) InitRoutes(port string) {
 		{
 			streams.Get("/race", websocket.New(h.streamRaces))
 		}
-
 	}
-
 	h.log.Info().Msg("Starting server on port " + port)
 	err := app.Listen(":" + port)
 	if err != nil {

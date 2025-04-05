@@ -23,3 +23,13 @@ type Top2Probability struct {
 	PlayerID        string  `json:"playerId"`
 	Top2Probability float64 `json:"top2Probability"`
 }
+
+type Top3Probability struct {
+	PlayerID        string  `json:"playerId"`
+	Top3Probability float64 `json:"top3Probability"`
+}
+
+type PairChance struct {
+	ID     string  `json:"id"`
+	Chance float64 `json:"chance"`
+}
