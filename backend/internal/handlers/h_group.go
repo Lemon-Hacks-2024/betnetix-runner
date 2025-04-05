@@ -55,7 +55,7 @@ func (h *Handler) getGroups(c *fiber.Ctx) error {
 	groups, err := h.services.Group.GetGroups()
 	if err != nil {
 		h.log.Error().Err(err).Msg("failed to get groups")
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "failed to get groups",
 		})
 	}
@@ -78,7 +78,7 @@ func (h *Handler) getGroup(c *fiber.Ctx) error {
 
 	group, err := h.services.Group.GetGroup(groupID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "failed to get group",
 		})
 	}
@@ -92,7 +92,7 @@ func (h *Handler) getGroup(c *fiber.Ctx) error {
 func (h *Handler) generateRandomPlayers(c *fiber.Ctx) error {
 	players, err := h.services.Group.GetRandomPlayers()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "failed to generate players",
 		})
 	}
@@ -122,7 +122,7 @@ func (h *Handler) updateGroupPlayers(c *fiber.Ctx) error {
 
 	err := h.services.Group.UpdatePlayers(groupID, input.Details)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
 		})
 	}
