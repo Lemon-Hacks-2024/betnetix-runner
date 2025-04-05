@@ -17,3 +17,13 @@
     display: none;
   }
 }
+
+[data-color-scheme="dark"] {
+  .vc-chrome-body {
+    background-color: var(--bg-color);
+  }
+
+  .vc-chrome-fields .vc-input__input {
+    color: var(--text-color);
+  }
+}

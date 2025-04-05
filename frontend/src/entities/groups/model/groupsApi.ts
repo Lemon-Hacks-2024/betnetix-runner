@@ -23,7 +23,9 @@ export const getGroups = async (): Promise<types.GroupsType[]> => {
 export const createGroup = async (
   data: ApiTypes.CreateGroupRequest
 ): Promise<string> => {
-  const res = await api.post<ApiResponse<{ group_id: string }>>("groups", data);
+  const res = await api.post<ApiResponse<{ group_id: string }>>("groups", {
+    details: data,
+  });
 
   return res.data.details.group_id;
 };
