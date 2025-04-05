@@ -1,10 +1,12 @@
+import GlobalTexts from "@/app/locale";
+
 export const columns = [
   {
-    title: "Название",
+    title: GlobalTexts.main.title,
     dataIndex: "name",
   },
   {
-    title: "Последний забег",
+    title: GlobalTexts.main.lastRace,
     dataIndex: "date_time_last_race",
   },
 ];

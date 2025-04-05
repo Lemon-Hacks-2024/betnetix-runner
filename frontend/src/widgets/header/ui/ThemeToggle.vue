@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { storeToRefs } from "pinia";
+import { BaseNeumorphic } from "@/shared/ui";
 import LightModeIcon from "@/assets/icons/LightModeIcon.vue";
 import DarkModeIcon from "@/assets/icons/DarkModeIcon.vue";
 import { useThemeStore } from "@/entities/theme";
@@ -11,11 +12,21 @@ const toggleTheme = () => setTheme(!isDark.value);
 </script>
 
 <template>
-  <div class="toggle" @click="toggleTheme">
-    <div class="circle" :class="{ active: isDark }">
-      <component :is="isDark ? DarkModeIcon : LightModeIcon" class="icon" />
+  <BaseNeumorphic
+    variant="flat"
+    width="56px"
+    height="32px"
+    radius="999px"
+    reverse
+    inset
+    hover
+  >
+    <div class="toggle" @click="toggleTheme">
+      <div class="circle" :class="{ active: isDark }">
+        <component :is="isDark ? DarkModeIcon : LightModeIcon" class="icon" />
+      </div>
     </div>
-  </div>
+  </BaseNeumorphic>
 </template>
 
 <style lang="scss" scoped>

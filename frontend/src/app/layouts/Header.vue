@@ -1,42 +1,24 @@
 <script lang="ts" setup>
-import { BaseNeumorphic } from "@/shared/ui";
-import DarkLogo from "@/assets/images/DarkLogo.webp";
-import LightLogo from "@/assets/images/LightLogo.webp";
-import { ThemeToggle } from "@/widgets";
-import { storeToRefs } from "pinia";
-import { useThemeStore } from "@/entities/theme";
-
-const { isDark } = storeToRefs(useThemeStore());
+import {
+  EntranceButton,
+  LogoTitle,
+  MenuButtons,
+  ThemeToggle,
+} from "@/widgets/header";
 </script>
 
 <template>
   <header class="header-container">
     <a-card class="header-content-wrapper" :bordered="false">
-      <a-flex class="header-content" justify="space-between" align="center">
-        <BaseNeumorphic
-          variant="neu"
-          width="100px"
-          height="100px"
-          radius="999px"
-          hover
-        >
-          <div class="logo-wrapper">
-            <img v-if="isDark" class="logo" :src="DarkLogo" />
-            <img v-else class="logo" :src="LightLogo" />
-          </div>
-        </BaseNeumorphic>
-
-        <BaseNeumorphic
-          variant="flat"
-          width="56px"
-          height="32px"
-          radius="999px"
-          reverse
-          inset
-          hover
-        >
+      <a-flex justify="space-between" align="center">
+        <LogoTitle />
+        <a-flex align="center" :gap="30">
           <ThemeToggle />
-        </BaseNeumorphic>
+          <div class="divider" />
+          <MenuButtons />
+          <div class="divider" />
+          <EntranceButton />
+        </a-flex>
       </a-flex>
     </a-card>
   </header>
@@ -60,20 +42,13 @@ const { isDark } = storeToRefs(useThemeStore());
     border-radius: 80px;
     border-top-right-radius: 40px;
     border-bottom-right-radius: 40px;
+  }
 
-    .logo-wrapper {
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      height: 100%;
-    }
-
-    .logo {
-      max-width: 80px;
-      max-height: 80px;
-    }
+  .divider {
+    width: 2px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: rgba($color: #000000, $alpha: 0.2);
   }
 }
 
