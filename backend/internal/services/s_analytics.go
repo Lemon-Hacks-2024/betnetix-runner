@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog"
 	"math"
 	"sort"
-	"strings"
 	"time"
 )
 
@@ -384,7 +383,7 @@ func (a AnalyticsService) GetPairPlaceProbabilities(groupID string) ([][]entity.
 func performPairPlaceStats(students []entity.Student, N int) [][]entity.PairChance {
 	firstPlaceCounts := make(map[string]int)
 	secondPlaceCounts := make(map[string]int)
-	pairCounts := make(map[string]int)
+	pairTop2Counts := make(map[string]int)
 
 	originals := make([]entity.Student, len(students))
 	copy(originals, students)
@@ -402,25 +401,53 @@ func performPairPlaceStats(students []entity.Student, N int) [][]entity.PairChan
 		if len(result) >= 2 {
 			first := result[0].Name
 			second := result[1].Name
-			key := first + "|" + second
-			pairCounts[key]++
+
 			firstPlaceCounts[first]++
 			secondPlaceCounts[second]++
+
+			// A|B и B|A — это одна пара
+			var key string
+			if first < second {
+				key = first + "|" + second
+			} else {
+				key = second + "|" + first
+			}
+			pairTop2Counts[key]++
 		}
 	}
 
 	total := float64(N)
 	var output [][]entity.PairChance
-	for k := range pairCounts {
-		parts := strings.Split(k, "|")
-		if len(parts) != 2 {
-			continue
+	addedPairs := make(map[string]bool)
+
+	for i := 0; i < len(students); i++ {
+		for j := i + 1; j < len(students); j++ {
+			a := students[i].Name
+			b := students[j].Name
+
+			var key string
+			if a < b {
+				key = a + "|" + b
+			} else {
+				key = b + "|" + a
+			}
+			if addedPairs[key] {
+				continue
+			}
+			addedPairs[key] = true
+
+			output = append(output, []entity.PairChance{
+				{
+					ID:     a,
+					Chance: float64(firstPlaceCounts[a]) / total,
+				},
+				{
+					ID:     b,
+					Chance: float64(secondPlaceCounts[b]) / total,
+				},
+			})
 		}
-		first, second := parts[0], parts[1]
-		output = append(output, []entity.PairChance{
-			{ID: first, Chance: float64(firstPlaceCounts[first]) / total},
-			{ID: second, Chance: float64(secondPlaceCounts[second]) / total},
-		})
 	}
+
 	return output
 }
