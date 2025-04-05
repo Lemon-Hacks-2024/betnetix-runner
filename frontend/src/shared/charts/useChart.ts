@@ -10,10 +10,12 @@ import {
   BarElement,
 } from "chart.js";
 
-import { optionsLine, optionsBar } from "./options";
+import { useOptions } from "./options";
 import { defaultDatasetLine, defaultDatasetBar } from "./defaultDataset";
 
 export const useChart = (typeChart: "line" | "bar") => {
+  const { optionsLine, optionsBar } = useOptions();
+
   switch (typeChart) {
     case "line":
       ChartJS.register(
@@ -39,7 +41,7 @@ export const useChart = (typeChart: "line" | "bar") => {
       break;
   }
 
-  const options = typeChart == "line" ? optionsLine : optionsBar;
+  const options = typeChart == "line" ? optionsLine.value : optionsBar.value;
 
   const defaultDataset =
     typeChart == "line" ? defaultDatasetLine : defaultDatasetBar;

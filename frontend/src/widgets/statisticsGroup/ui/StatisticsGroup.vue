@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import ChartPlace from "./ChartPlaces.vue";
 import ChartTime from "./ChartTime.vue";
+import { useTexts } from "@/app/locale/model";
+const { $t } = useTexts();
 </script>
 
 <template>

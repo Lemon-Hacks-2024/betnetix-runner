@@ -5,6 +5,7 @@ import { Chrome } from "@ckpack/vue-color";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { message } from "ant-design-vue";
+import { useTexts } from "@/app/locale/model";
 
 import { FormItemTooltip } from "@/shared/ui";
 import { CreateGroupRequest, useGroupsStore } from "@/entities/groups";
@@ -14,6 +15,7 @@ import { useAnimationCollapse } from "./animationCollapse";
 const open = defineModel<boolean>("open");
 
 const router = useRouter();
+const { $t } = useTexts();
 
 const groupsStore = useGroupsStore();
 const { fetchRandomPlayers, fetchCreateGroups } = groupsStore;

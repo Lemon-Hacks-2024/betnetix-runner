@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { h, ref } from "vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
+import { useTexts } from "@/app/locale/model";
 
 import CreateGroup from "@/widgets/createGroup";
 import GroupsTable from "@/widgets/groupsTable";
 
 const openCreateGroup = ref(false);
+
+const { $t } = useTexts();
 </script>
 
 <template>

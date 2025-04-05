@@ -37,11 +37,13 @@ watch(
 </script>
 
 <template>
-  <Transition appear>
-    <Skeleton v-if="loadingGetGroup" />
+  <div>
+    <Transition appear>
+      <Skeleton v-if="loadingGetGroup" />
 
-    <a-flex v-else vertical :gap="30">
-      <StatisticsGroup />
-    </a-flex>
-  </Transition>
+      <a-flex v-else vertical :gap="30">
+        <StatisticsGroup />
+      </a-flex>
+    </Transition>
+  </div>
 </template>
