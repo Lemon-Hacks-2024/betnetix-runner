@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/rs/zerolog"
 	"math"
+	"math/rand"
 	"sort"
 	"time"
 )
@@ -405,7 +406,6 @@ func performPairPlaceStats(students []entity.Student, N int) [][]entity.PairChan
 			firstPlaceCounts[first]++
 			secondPlaceCounts[second]++
 
-			// A|B и B|A — это одна пара
 			var key string
 			if first < second {
 				key = first + "|" + second
@@ -436,15 +436,31 @@ func performPairPlaceStats(students []entity.Student, N int) [][]entity.PairChan
 			}
 			addedPairs[key] = true
 
+			// вычисляем и нормализуем шансы прямо здесь
+			rawChanceA := float64(firstPlaceCounts[a]) / total
+			rawChanceB := float64(secondPlaceCounts[b]) / total
+
+			// встроенная коррекция для A
+			if rawChanceA < 0.01 || rawChanceA > 0.5 {
+				rawChanceA = 0.02 + rand.Float64()*(0.35-0.02)
+			} else if rawChanceA < 0.02 {
+				rawChanceA = 0.02 + rand.Float64()*0.01 // 0.02–0.03
+			} else if rawChanceA > 0.35 {
+				rawChanceA = 0.35 - rand.Float64()*0.02 // 0.33–0.35
+			}
+
+			// встроенная коррекция для B
+			if rawChanceB < 0.01 || rawChanceB > 0.5 {
+				rawChanceB = 0.02 + rand.Float64()*(0.35-0.02)
+			} else if rawChanceB < 0.02 {
+				rawChanceB = 0.02 + rand.Float64()*0.01
+			} else if rawChanceB > 0.35 {
+				rawChanceB = 0.35 - rand.Float64()*0.02
+			}
+
 			output = append(output, []entity.PairChance{
-				{
-					ID:     a,
-					Chance: float64(firstPlaceCounts[a]) / total,
-				},
-				{
-					ID:     b,
-					Chance: float64(secondPlaceCounts[b]) / total,
-				},
+				{ID: a, Chance: rawChanceA},
+				{ID: b, Chance: rawChanceB},
 			})
 		}
 	}
