@@ -10,10 +10,10 @@ import (
 
 type Race interface {
 	Create(race entity.Race) (string, error)
-	GetAllByGroupId(groupID string) ([]entity.Race, error)
 	SetResults(race entity.Race) (string, error)
 	GetLastRace(groupID string) (entity.Race, error)
 	ExistActive(groupID string) (bool, error)
+	GetAllByGroupID(groupID string) ([]entity.Race, error)
 }
 
 type RaceStorage struct {
@@ -43,13 +43,49 @@ func (s *RaceStorage) Create(race entity.Race) (string, error) {
 	return id, nil
 }
 
-func (s *RaceStorage) GetAllByGroupId(groupID string) ([]entity.Race, error) {
-	query := `SELECT id, group_id FROM races WHERE group_id = $1`
-	var races []entity.Race
-	err := s.postgres.DB.Select(&races, query, groupID)
+func (s *RaceStorage) GetAllByGroupID(groupID string) ([]entity.Race, error) {
+	query := `
+		SELECT id, group_id, results, started_at, finished_at
+		FROM races
+		WHERE group_id = $1
+		ORDER BY started_at ASC
+	`
+
+	rows, err := s.postgres.DB.Query(query, groupID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query races by group_id: %w", err)
 	}
+	defer rows.Close()
+
+	var races []entity.Race
+
+	for rows.Next() {
+		var (
+			race        entity.Race
+			resultsJSON []byte
+		)
+
+		if err := rows.Scan(
+			&race.Id,
+			&race.GroupId,
+			&resultsJSON,
+			&race.StartedAt,
+			&race.FinishedAt,
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan race row: %w", err)
+		}
+
+		if err := json.Unmarshal(resultsJSON, &race.Results); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal race results: %w", err)
+		}
+
+		races = append(races, race)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("rows iteration error: %w", err)
+	}
+
 	return races, nil
 }
 

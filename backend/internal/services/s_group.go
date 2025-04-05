@@ -56,7 +56,7 @@ func (g GroupService) GetGroup(groupID string) (entity.Group, error) {
 		return entity.Group{}, err
 	}
 
-	races, err := g.storage.Race.GetAllByGroupId(groupID)
+	races, err := g.storage.Race.GetAllByGroupID(groupID)
 	if err != nil {
 		g.log.Error().Err(err).Msg("не удалось получить группу")
 		return entity.Group{}, err
