@@ -48,10 +48,12 @@ func (h *Handler) InitRoutes(port string) {
 		{
 			groups.Post("/", h.createGroup)
 			groups.Get("/", h.getGroups)
+			groups.Get("/players/random", h.generateRandomPlayers)
 
 			groupId := groups.Group("/:id")
 			{
 				groupId.Get("/", h.getGroup)
+				groupId.Patch("/players", h.updateGroupPlayers)
 
 				races := groupId.Group("/races")
 				{

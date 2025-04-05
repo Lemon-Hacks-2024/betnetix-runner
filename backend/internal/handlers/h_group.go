@@ -7,24 +7,26 @@ import (
 )
 
 func (h *Handler) createGroup(c *fiber.Ctx) error {
-
-	// Получаем только name из запроса
 	var input struct {
-		Name string `json:"name"`
-	}
-	if err := c.BodyParser(&input); err != nil || input.Name == "" {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "Invalid group name"})
+		Details struct {
+			Name    string          `json:"name"`
+			Players []entity.Player `json:"players"` // можно не передавать
+		} `json:"details"`
 	}
 
-	// Создаём структуру группы
+	if err := c.BodyParser(&input); err != nil || input.Details.Name == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid group data",
+		})
+	}
+
 	group := entity.Group{
 		ID:               uuid.New().String(),
-		Name:             input.Name,
+		Name:             input.Details.Name,
 		DateTimeLastRace: 0,
-		Players:          nil,
+		Players:          input.Details.Players,
 	}
 
-	// Создаём группу через сервис
 	groupID, err := h.services.Group.CreateGroup(group)
 	if err != nil {
 		h.log.Error().Err(err).Msg("failed to create group")
@@ -33,18 +35,15 @@ func (h *Handler) createGroup(c *fiber.Ctx) error {
 		})
 	}
 
-	// Возвращаем успешный ответ
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "ok",
 		"details": fiber.Map{
 			"group_id": groupID,
-			"name":     group.Name,
 		},
 	})
 }
 
 func (h *Handler) getGroups(c *fiber.Ctx) error {
-
 	groups, err := h.services.Group.GetGroups()
 	if err != nil {
 		h.log.Error().Err(err).Msg("failed to get groups")
@@ -65,16 +64,62 @@ func (h *Handler) getGroup(c *fiber.Ctx) error {
 	groupID := c.Params("id")
 	if groupID == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "group ID is required",
+			"message": "group ID is required",
 		})
 	}
 
 	group, err := h.services.Group.GetGroup(groupID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
+			"message": "failed to get group",
 		})
 	}
 
-	return c.JSON(group)
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+		"details": group,
+	})
+}
+
+func (h *Handler) generateRandomPlayers(c *fiber.Ctx) error {
+	players, err := h.services.Group.GetRandomPlayers()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "failed to generate players",
+		})
+	}
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+		"details": players,
+	})
+}
+
+func (h *Handler) updateGroupPlayers(c *fiber.Ctx) error {
+	groupID := c.Params("id")
+	if groupID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "group ID is required",
+		})
+	}
+
+	var input struct {
+		Details []entity.Player `json:"details"`
+	}
+
+	if err := c.BodyParser(&input); err != nil || len(input.Details) == 0 {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "invalid player data",
+		})
+	}
+
+	err := h.services.Group.UpdatePlayers(groupID, input.Details)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "ok",
+	})
 }

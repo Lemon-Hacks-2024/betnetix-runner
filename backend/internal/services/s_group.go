@@ -14,6 +14,39 @@ type GroupService struct {
 	storage *storages.Storage
 }
 
+func (g GroupService) UpdatePlayers(groupID string, players []entity.Player) error {
+	return g.storage.Group.UpdatePlayers(groupID, players)
+}
+
+func (s *GroupService) GetRandomPlayers() ([]entity.Player, error) {
+	var players []entity.Player
+
+	defaultHexColors := []string{
+		"#FF5733", // оранжевый
+		"#33C1FF", // голубой
+		"#75FF33", // салатовый
+		"#FF33EC", // розовый
+		"#FFD433", // жёлтый
+		"#8D33FF", // фиолетовый
+	}
+
+	for i := 0; i < 6; i++ {
+		player := entity.Player{
+			ID:            uuid.New().String(),
+			Name:          "Игрок " + string(rune('A'+i)),
+			Number:        string(rune('1' + i)),
+			Color:         defaultHexColors[i%len(defaultHexColors)],
+			ReactionTime:  0.1 + rand.Float64()*(0.3-0.1), // от 0.1 до 0.3
+			Acceleration:  2 + rand.Float64()*3,           // от 2 до 5 м/с²
+			MaxSpeed:      7 + rand.Float64()*4,           // от 7 до 11 м/с
+			CoffSpeedLoos: 0.05 + rand.Float64()*0.15,     // от 0.05 до 0.2
+		}
+		players = append(players, player)
+	}
+
+	return players, nil
+}
+
 func (g GroupService) GetGroup(groupID string) (entity.Group, error) {
 	group, err := g.storage.Group.GetById(groupID)
 	if err != nil {

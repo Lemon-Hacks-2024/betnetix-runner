@@ -11,6 +11,31 @@ type GroupStorage struct {
 	postgres *database.PostgresDB
 }
 
+func (g GroupStorage) UpdatePlayers(groupID string, players []entity.Player) error {
+	playersJSON, err := json.Marshal(players)
+	if err != nil {
+		return fmt.Errorf("failed to marshal players: %w", err)
+	}
+
+	query := `UPDATE groups SET players = $1 WHERE id = $2 AND deleted_at = 0`
+
+	result, err := g.postgres.DB.Exec(query, playersJSON, groupID)
+	if err != nil {
+		return fmt.Errorf("failed to update players: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check update result: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("group not found or already deleted")
+	}
+
+	return nil
+}
+
 func NewGroupStorage(pg *database.PostgresDB) *GroupStorage {
 	return &GroupStorage{
 		postgres: pg,
