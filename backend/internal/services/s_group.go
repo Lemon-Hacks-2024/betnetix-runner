@@ -14,6 +14,13 @@ type GroupService struct {
 	storage *storages.Storage
 }
 
+func NewGroupService(log zerolog.Logger, storage *storages.Storage) *GroupService {
+	return &GroupService{
+		log:     log,
+		storage: storage,
+	}
+}
+
 func (g GroupService) UpdatePlayers(groupID string, players []entity.Player) error {
 	return g.storage.Group.UpdatePlayers(groupID, players)
 }
@@ -72,13 +79,6 @@ func (g GroupService) GetGroups() ([]entity.Group, error) {
 		return nil, fmt.Errorf("не удалось получить группы: %w", err)
 	}
 	return groups, nil
-}
-
-func NewGroupService(log zerolog.Logger, storage *storages.Storage) *GroupService {
-	return &GroupService{
-		log:     log,
-		storage: storage,
-	}
 }
 
 func (g GroupService) CreateGroup(group entity.Group) (string, error) {
