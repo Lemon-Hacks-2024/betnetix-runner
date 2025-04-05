@@ -66,6 +66,20 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 		currentSpeeds[i] = participants[i].ReactionTime * participants[i].Acceleration // Начальная скорость после реакции
 	}
 
+	//
+	count := 3
+	tickerByStart := time.NewTicker(1 * time.Second)
+	defer tickerByStart.Stop()
+	for range tickerByStart.C {
+		if count == 0 {
+			break
+		}
+		msg, _ := json.Marshal(map[string]string{"message": "countdown", "details": string(count)})
+		count -= 1
+		groupSubscribers[groupId].BroadcastMessage(websocket.TextMessage, msg)
+	}
+	//
+
 	finished := false
 	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
