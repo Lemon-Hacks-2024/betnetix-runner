@@ -43,11 +43,13 @@ watch(
     <Transition appear>
       <Skeleton v-if="loadingGetGroup" />
 
-      <a-flex v-else vertical :gap="30">
+      <a-flex v-else-if="dataGroup" vertical :gap="30">
         <PredictionOutcomes />
-        <RaceStream v-if="dataGroup !== null" :group="dataGroup"/>
+        <RaceStream />
         <StatisticsGroup />
       </a-flex>
+
+      <div v-else><a-empty /></div>
     </Transition>
   </div>
 </template>

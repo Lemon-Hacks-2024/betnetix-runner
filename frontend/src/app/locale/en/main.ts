@@ -11,9 +11,12 @@ export const TextsMain = {
   statisticRaces: "Race statistics",
   chartPosition: "Schedule by location",
   chartTime: "Time schedule",
+  advancedSettings: "Advanced settings",
   predictionOutcomes: "Prediction of outcomes",
   probabilityLocation: "Probability by location",
   probabilityTop: "Probability of top 2 and top 3",
   pairedProbability: "Paired probability",
-  raceBroadcast: "Race broadcast"
+  raceBroadcast: "Race broadcast",
+  raceOver: "The race is over",
+  startRace: "Start race",
 };
