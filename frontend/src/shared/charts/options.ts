@@ -32,7 +32,6 @@ export const useOptions = () => {
         },
         ticks: {
           stepSize: 20,
-          grace: "20%",
           color: "#919EAB",
           font: {
             size: 12,
@@ -77,7 +76,7 @@ export const useOptions = () => {
             size: 14,
             lineHeight: "22px",
           },
-          padding: 32,
+          padding: 12,
         },
       },
     },
