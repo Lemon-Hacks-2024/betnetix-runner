@@ -9,11 +9,12 @@ ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 COPY package.json ./
 
 RUN npm install
+RUN npm install -g vite
 
 COPY . ./
 
 FROM builder as prod-builder
-RUN npm run build
+RUN vite build
 
 FROM nginx:latest as prod
 
