@@ -114,6 +114,7 @@ func (h *Handler) updateGroupPlayers(c *fiber.Ctx) error {
 	}
 
 	if err := c.BodyParser(&input); err != nil || len(input.Details) == 0 {
+		h.log.Error().Err(err).Msg("BodyParser failed")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "invalid player data",
 		})
