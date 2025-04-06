@@ -1,0 +1,29 @@
+.vc-chrome {
+  box-shadow: none !important;
+
+  &-controls {
+    align-items: center;
+  }
+
+  &-hue-wrap {
+    margin: 0;
+  }
+
+  &-alpha-wrap {
+    display: none;
+  }
+
+  &-toggle-btn {
+    display: none;
+  }
+}
+
+[data-color-scheme="dark"] {
+  .vc-chrome-body {
+    background-color: var(--bg-color);
+  }
+
+  .vc-chrome-fields .vc-input__input {
+    color: var(--text-color);
+  }
+}
