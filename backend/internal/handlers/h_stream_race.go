@@ -57,7 +57,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 		Id:        "",
 		GroupId:   groupId,
 		Results:   result,
-		StartedAt: time.Now().UTC().Unix(),
+		StartedAt: time.Now().UTC().UnixNano() / 1e6, // время в миллисекундах
 	}
 
 	// Инициализация текущей скорости каждого участника
@@ -81,17 +81,24 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 	//
 
 	finished := false
-	ticker := time.NewTicker(500 * time.Millisecond)
+	ticker := time.NewTicker(1 * time.Second)
 	defer ticker.Stop()
+
+	race.StartedAt = time.Now().UTC().UnixNano() / 1e6
 
 	for range ticker.C {
 		allFinished := true
 
 		for i, participant := range participants {
 			if race.Results[i].Distance < trackLength {
+
 				// Применение случайного вырыва
-				if rand.Float64() < 0.1 { // 10% шанс на вырыв
-					currentSpeeds[i] += participant.MaxSpeed * 0.2 // Увеличение скорости на 20% от максимальной
+				if rand.Float64() < 0.1 { // 10% шанс на рывок
+					boost := 1 + (rand.Float64() * 0.2) // Рандомный буст от 1 до 1.2
+					currentSpeeds[i] += participant.MaxSpeed * boost
+					if currentSpeeds[i] > participant.MaxSpeed {
+						currentSpeeds[i] = participant.MaxSpeed
+					}
 				}
 
 				// Обновление скорости с учетом потери скорости
@@ -108,7 +115,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 				newDistance := float64(race.Results[i].Distance) + currentSpeeds[i]
 				if newDistance >= trackLength {
 					race.Results[i].Distance = trackLength
-					race.Results[i].FinishedAt = time.Now().Unix()
+					race.Results[i].FinishedAt = time.Now().UTC().UnixNano() / 1e6
 				} else {
 					race.Results[i].Distance = int64(newDistance)
 					allFinished = false
@@ -136,10 +143,22 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 
 		if allFinished && !finished {
 			finished = true
-			msg, _ := json.Marshal(map[string]string{"message": "finish"})
-			groupSubscribers[groupId].BroadcastMessage(websocket.TextMessage, msg)
-			race.FinishedAt = time.Now().UTC().Unix()
 			race.Id = raceId
+			race.FinishedAt = time.Now().UTC().Unix()
+
+			for i := range race.Results {
+				race.Results[i].RaceTime = race.Results[i].FinishedAt - race.StartedAt
+				race.Results[i].FinishedAt = race.Results[i].FinishedAt / 1000
+			}
+
+			race.StartedAt = race.StartedAt / 1000
+
+			msg, _ := json.Marshal(fiber.Map{
+				"message": "finish",
+				"details": race,
+			})
+			groupSubscribers[groupId].BroadcastMessage(websocket.TextMessage, msg)
+
 			h.log.Debug().Msgf("race result: %v", race)
 			_, err := h.services.Race.SetResults(race)
 			if err != nil {
