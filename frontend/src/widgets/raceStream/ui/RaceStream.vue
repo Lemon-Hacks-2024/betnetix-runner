@@ -70,7 +70,6 @@ function getPlayerIndex(playerId) {
               :key="player.id"
               :color="player.color"
               :position="0"
-              :speed="0.1"
           />
         </div>
 

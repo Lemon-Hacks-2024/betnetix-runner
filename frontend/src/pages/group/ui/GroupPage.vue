@@ -8,6 +8,7 @@ import { useGroupsStore, Group } from "@/entities/groups";
 import StatisticsGroup from "@/widgets/statisticsGroup";
 import PredictionOutcomes from "@/widgets/predictionOutcomes";
 import Skeleton from "./Skeleton.vue";
+import RaceStream from "@/widgets/raceStream";
 
 const route = useRoute();
 const router = useRouter();
@@ -44,6 +45,7 @@ watch(
 
       <a-flex v-else vertical :gap="30">
         <PredictionOutcomes />
+        <RaceStream v-if="dataGroup !== null" :group="dataGroup"/>
         <StatisticsGroup />
       </a-flex>
     </Transition>
