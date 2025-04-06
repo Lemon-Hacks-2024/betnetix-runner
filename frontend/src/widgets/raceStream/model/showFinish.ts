@@ -25,7 +25,6 @@ export const useFinish = () => {
       title: "Место",
       dataIndex: "position",
       key: "position",
-      align: "center",
     },
     {
       title: "Участник",

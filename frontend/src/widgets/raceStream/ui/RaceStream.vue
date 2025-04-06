@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, inject, Ref, watchEffect, computed } from "vue";
+import { ref, onMounted, inject, Ref, watchEffect } from "vue";
 
 import { useTexts } from "@/app/locale/model";
 import { Group } from "@/entities/groups";

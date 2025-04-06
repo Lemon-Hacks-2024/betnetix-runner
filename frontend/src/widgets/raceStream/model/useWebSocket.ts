@@ -1,4 +1,4 @@
-import { ref, onUnmounted, inject, Ref } from "vue";
+import { ref, onUnmounted } from "vue";
 import { useFinish } from "./showFinish";
 
 export function useWebSocket(groupId: string) {
