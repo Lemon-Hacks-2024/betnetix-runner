@@ -3,6 +3,7 @@ import { ApiResponse } from "@/shared/types";
 
 import * as types from "./GroupsType";
 import * as ApiTypes from "./GroupsApiType";
+import { RacesModel } from "./RacesModel";
 
 export const getRandomPlayers = async (): Promise<types.Player[]> => {
   const res = await api.get<ApiResponse<types.Player[]>>(
@@ -42,18 +43,20 @@ export const updateGroup = async (
   await api.patch<ApiResponse<{ group_id: string }>>(
     `groups/${data.id}/players`,
     {
-      details: data,
+      details: data.players,
     }
   );
 };
 
-// export const updateGroup = async (
-//   data: ApiTypes.UpdateGroupRequest
-// ): Promise<void> => {
-//   await api.patch<ApiResponse<{ group_id: string }>>(
-//     `/groups/:id/races/:quantity`,
-//     {
-//       details: data,
-//     }
-//   );
-// };
+export const generateRaces = async (
+  data: ApiTypes.GenerateRacesRequest
+): Promise<RacesModel> => {
+  try {
+    const res = await api.post<RacesModel>(
+      `/groups/${data.groupId}/races/${data.quantity}`
+    );
+    return res.data;
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};

@@ -8,21 +8,29 @@ import { message } from "ant-design-vue";
 import { useTexts } from "@/app/locale/model";
 
 import { BaseNeumorphic, FormItemTooltip } from "@/shared/ui";
-import { CreateGroupRequest, useGroupsStore } from "@/entities/groups";
+import {
+  CreateGroupRequest,
+  UpdateGroupRequest,
+  useGroupContext,
+  useGroupsStore,
+} from "@/entities/groups";
 import { rules, rulesPlayers } from "./rules";
 import { useAnimationCollapse } from "./animationCollapse";
 import ParamsToggle from "./ParamsToggle.vue";
 
-const open = defineModel<boolean>("open");
+const open = defineModel<boolean>("open", { required: true });
+const props = defineProps<{ groupId?: string }>();
 
 const router = useRouter();
 const { $t } = useTexts();
 
 const groupsStore = useGroupsStore();
-const { fetchRandomPlayers, fetchCreateGroups } = groupsStore;
-const { loadingRandomPlayers, loadingCreateGroups } = storeToRefs(groupsStore);
+const { loadingRandomPlayers, loadingCreateGroups, loadingUpdateGroup } =
+  storeToRefs(groupsStore);
+const { fetchRandomPlayers, fetchCreateGroups, fetchUpdateGroup } = groupsStore;
 
 const { beforeEnter, enter, leave } = useAnimationCollapse();
+const { dataGroup, reloadGroup } = useGroupContext();
 
 const defaultFormData: CreateGroupRequest = {
   name: "",
@@ -30,27 +38,47 @@ const defaultFormData: CreateGroupRequest = {
   players: [],
 };
 
+const formRef = ref();
+const advancedRow = ref<number>(-1);
+
 const formData = reactive<CreateGroupRequest>({ ...defaultFormData });
 
-watchEffect(async () => {
-  if (!open.value) return;
-  formData.players = (await fetchRandomPlayers()) ?? [];
-});
-
-const advancedRow = ref<number>(-1);
 const updateAdvancedRow = (i: number) => {
   if (i === advancedRow.value) advancedRow.value = -1;
   else advancedRow.value = i;
 };
 
-const formRef = ref();
 const sendForm = async () => {
   await formRef.value?.validate();
-  const groupId = await fetchCreateGroups(formData);
+  if (!formData.name || !formData.players.length) return;
 
-  router.push(`/group/${groupId}`);
-  message.success("Группа успешно создана");
+  if (props.groupId) {
+    const data: UpdateGroupRequest = {
+      id: props.groupId,
+      name: formData.name,
+      is_self: formData.is_self,
+      players: formData.players,
+    };
+    await fetchUpdateGroup(data);
+    open.value = false;
+    if (reloadGroup && props.groupId) await reloadGroup(props.groupId);
+  } else {
+    const groupId = await fetchCreateGroups(formData);
+    router.push(`/group/${groupId}`);
+    message.success("Группа успешно создана");
+  }
 };
+
+watchEffect(async () => {
+  if (props.groupId && dataGroup?.value) {
+    formData.name = dataGroup.value.name;
+    formData.players = dataGroup.value.players ?? [];
+    formData.is_self = true;
+  } else {
+    formData.players = (await fetchRandomPlayers()) ?? [];
+    formData.is_self = false;
+  }
+});
 </script>
 
 <template>
@@ -60,7 +88,9 @@ const sendForm = async () => {
     :title="$t.main.groupCreating"
     :ok-text="$t.buttons.create"
     @ok="sendForm"
-    :ok-button-props="{ loading: loadingCreateGroups }"
+    :ok-button-props="{
+      loading: groupId ? loadingUpdateGroup : loadingCreateGroups,
+    }"
   >
     <a-form ref="formRef" :model="formData" :rules="rules" layout="vertical">
       <a-form-item name="name" :label="$t.labels.groupNameLabel">
@@ -72,7 +102,11 @@ const sendForm = async () => {
         </BaseNeumorphic>
       </a-form-item>
 
-      <a-form-item name="is_self" :label="$t.labels.paramsLabel">
+      <a-form-item
+        v-if="!props.groupId"
+        name="is_self"
+        :label="$t.labels.paramsLabel"
+      >
         <template #tooltip>
           <FormItemTooltip>
             {{ $t.main.randomByDefault }}
@@ -83,7 +117,10 @@ const sendForm = async () => {
       </a-form-item>
 
       <Transition name="fade">
-        <a-spin v-if="formData.is_self" :spinning="loadingRandomPlayers">
+        <a-spin
+          v-if="formData.is_self || groupId"
+          :spinning="loadingRandomPlayers"
+        >
           <div v-for="(player, i) in formData.players" :key="i">
             <a-flex :gap="12">
               <a-form-item

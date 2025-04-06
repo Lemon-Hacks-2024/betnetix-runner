@@ -9,3 +9,8 @@ export interface CreateGroupRequest {
 export interface UpdateGroupRequest extends CreateGroupRequest {
   id: string;
 }
+
+export interface GenerateRacesRequest {
+  groupId: string;
+  quantity: number;
+}

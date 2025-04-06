@@ -1,10 +1,35 @@
 <script lang="ts" setup>
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import { useTexts } from "@/app/locale/model";
 import { BaseNeumorphic } from "@/shared/ui";
-import { ref } from "vue";
+import {
+  GenerateRacesRequest,
+  useGroupContext,
+  useGroupsStore,
+} from "@/entities/groups";
 
+const props = defineProps<{ groupId: string | undefined }>();
+
+const { loadingGenerateRaces } = storeToRefs(useGroupsStore());
+const { fetchGenerateRaces } = useGroupsStore();
 const { $t } = useTexts();
+const { reloadGroup } = useGroupContext();
+
 const racesCount = ref<number | null>(null);
+
+const handleClick = async () => {
+  const groupId = props.groupId;
+  if (!racesCount.value || !groupId) return;
+
+  const data: GenerateRacesRequest = {
+    groupId: groupId as string,
+    quantity: racesCount.value,
+  };
+  await fetchGenerateRaces(data);
+
+  if (reloadGroup) await reloadGroup(groupId as string);
+};
 </script>
 
 <template>
@@ -19,7 +44,11 @@ const racesCount = ref<number | null>(null);
       />
     </BaseNeumorphic>
     <BaseNeumorphic width="fit-content" pressable>
-      <a-button class="generate-btn">
+      <a-button
+        class="generate-btn"
+        :loading="loadingGenerateRaces"
+        @click="handleClick"
+      >
         <span>{{ $t.buttons.generate }}</span>
       </a-button>
     </BaseNeumorphic>
