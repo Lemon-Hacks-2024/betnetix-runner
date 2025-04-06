@@ -41,6 +41,43 @@ func (gs *GroupSubscriber) BroadcastMessage(mt int, message []byte) {
 // Глобальная переменная для хранения подписчиков по группам
 var groupSubscribers = make(map[string]*GroupSubscriber)
 
+func (h *Handler) streamRaces(c *websocket.Conn) {
+	defer c.Close()
+	groupID := c.Query("group_id")
+	if groupID == "" {
+		h.log.Error().Msg("group_id is required")
+		return
+	}
+
+	if groupSubscribers[groupID] == nil {
+		h.log.Error().Msgf("group %s not found", groupID)
+		NewGroupSubscriber()
+	}
+
+	// Подписываем пользователя на группу
+	if _, ok := groupSubscribers[groupID]; !ok {
+		groupSubscribers[groupID] = NewGroupSubscriber()
+	}
+
+	groupSubscribers[groupID].AddSubscriber(c)
+
+	for {
+		mt, msg, err := c.ReadMessage()
+		if err != nil {
+			h.log.Error().Msgf("read error: %v", err)
+			break
+		}
+		h.log.Debug().Msgf("recv: %s", msg)
+		// Логика для обратки сообщений от клиента
+
+		// Рассылка сообщения всем подписчикам группы
+		groupSubscribers[groupID].BroadcastMessage(mt, msg)
+	}
+
+	// Удаление подписчика при отключении
+	groupSubscribers[groupID].RemoveSubscriber(c)
+}
+
 func (h *Handler) simulateRace(groupId string, raceId string, participants []entity.Player) {
 	const trackLength = 100
 
@@ -164,42 +201,4 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 			break
 		}
 	}
-}
-
-func (h *Handler) streamRaces(c *websocket.Conn) {
-	defer c.Close()
-	groupID := c.Query("group_id")
-	if groupID == "" {
-		h.log.Error().Msg("group_id is required")
-		return
-	}
-
-	if groupSubscribers[groupID] == nil {
-		h.log.Error().Msgf("group %s not found", groupID)
-		NewGroupSubscriber()
-	}
-
-	// Подписываем пользователя на группу
-	if _, ok := groupSubscribers[groupID]; !ok {
-		groupSubscribers[groupID] = NewGroupSubscriber()
-	}
-
-	groupSubscribers[groupID].AddSubscriber(c)
-
-	for {
-		mt, msg, err := c.ReadMessage()
-		if err != nil {
-			h.log.Error().Msgf("read error: %v", err)
-			break
-		}
-		h.log.Debug().Msgf("recv: %s", msg)
-
-		// Здесь может быть логика обработки сообщений от клиентов, например команды на подписку или отписку
-
-		// Рассылка сообщения всем подписчикам группы
-		groupSubscribers[groupID].BroadcastMessage(mt, msg)
-	}
-
-	// Удаление подписчика при отключении
-	groupSubscribers[groupID].RemoveSubscriber(c)
 }

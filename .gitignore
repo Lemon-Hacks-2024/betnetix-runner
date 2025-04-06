@@ -23,3 +23,5 @@ go.work.sum
 
 # env file
 backend/.env
+backend.env
+frontend.env

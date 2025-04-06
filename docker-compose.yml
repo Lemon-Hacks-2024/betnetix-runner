@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+
+  postgres:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./backend.env
+    networks:
+      - betnetix
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    env_file:
+      - ./backend.env
+    networks:
+      - betnetix
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "10010:8080"
+    env_file:
+      - ./backend.env
+    networks:
+      - betnetix
+    depends_on:
+      - postgres
+      - redis
+
+networks:
+  betnetix:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
