@@ -127,7 +127,7 @@ onUnmounted(() => {
     <div
       class="player"
       :class="{ stop: state == 'stop', start: state == 'start' }"
-      :style="{ left: position + '%' }"
+      :style="{ left: Math.min(position, 96) + '%' }"
     >
       <div v-html="svgContent"></div>
     </div>
@@ -139,14 +139,11 @@ onUnmounted(() => {
   position: absolute;
   transition: 1.3s linear;
   bottom: 5px;
-  transform: translateX(-80%);
-}
-.player.stop {
+  z-index: 2;
   transform: translateX(-23px);
 }
-
 .player.start {
-  bottom: -5px;
+  bottom: -10px;
 }
 
 .track {
@@ -157,6 +154,7 @@ onUnmounted(() => {
   height: 60px;
   border-top: 1px solid #000;
   border-bottom: 1px solid #000;
+  border-radius: 16px;
 }
 
 .track__name {

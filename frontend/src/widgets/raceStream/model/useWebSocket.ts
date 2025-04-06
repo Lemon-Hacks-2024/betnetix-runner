@@ -44,12 +44,6 @@ export function useWebSocket(groupId: string) {
         default:
           break;
       }
-
-      if (data.message === "countdown") {
-      }
-      if (data.message === "update") {
-      } else if (data.message === "finish") {
-      }
     };
 
     ws.value.onerror = (error) => {
