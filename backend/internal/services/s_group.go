@@ -14,6 +14,15 @@ type GroupService struct {
 	storage *storages.Storage
 }
 
+func (g GroupService) UpdateGroupName(groupID string, name string) error {
+	err := g.storage.Group.UpdateName(groupID, name)
+	if err != nil {
+		g.log.Error().Err(err).Str("group_id", groupID).Msg("не удалось обновить имя группы")
+		return fmt.Errorf("не удалось обновить имя группы: %w", err)
+	}
+	return nil
+}
+
 func NewGroupService(log zerolog.Logger, storage *storages.Storage) *GroupService {
 	return &GroupService{
 		log:     log,

@@ -12,6 +12,7 @@ type Group interface {
 	GetGroup(groupID string) (entity.Group, error)
 	GetRandomPlayers() ([]entity.Player, error)
 	UpdatePlayers(groupID string, players []entity.Player) error
+	UpdateGroupName(groupID string, name string) error
 }
 
 type Analytics interface {

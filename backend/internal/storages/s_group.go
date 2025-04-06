@@ -142,3 +142,23 @@ func (g GroupStorage) GetById(groupID string) (entity.Group, error) {
 
 	return group, nil
 }
+
+func (g GroupStorage) UpdateName(groupID string, newName string) error {
+	query := `UPDATE groups SET name = $1 WHERE id = $2 AND deleted_at = 0`
+
+	result, err := g.postgres.DB.Exec(query, newName, groupID)
+	if err != nil {
+		return fmt.Errorf("failed to update group name: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to check update result: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("group not found or already deleted")
+	}
+
+	return nil
+}

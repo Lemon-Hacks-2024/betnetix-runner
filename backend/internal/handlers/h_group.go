@@ -110,18 +110,30 @@ func (h *Handler) updateGroupPlayers(c *fiber.Ctx) error {
 	}
 
 	var input struct {
-		Details []entity.Player `json:"details"`
+		GroupName string          `json:"groupName"` // новое имя, если есть
+		Details   []entity.Player `json:"details"`   // список игроков
 	}
 
 	if err := c.BodyParser(&input); err != nil || len(input.Details) == 0 {
-		h.log.Error().Err(err).Msg("BodyParser failed")
+		h.log.Error().Err(err).Msg("BodyParser failed or empty player list")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": "invalid player data",
 		})
 	}
 
-	err := h.services.Group.UpdatePlayers(groupID, input.Details)
-	if err != nil {
+	// Если указано новое имя — обновляем его
+	if input.GroupName != "" {
+		if err := h.services.Group.UpdateGroupName(groupID, input.GroupName); err != nil {
+			h.log.Error().Err(err).Str("group_id", groupID).Msg("failed to update group name")
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"message": "failed to update group name",
+			})
+		}
+	}
+
+	// Обновляем игроков
+	if err := h.services.Group.UpdatePlayers(groupID, input.Details); err != nil {
+		h.log.Error().Err(err).Str("group_id", groupID).Msg("failed to update players")
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"message": err.Error(),
 		})
