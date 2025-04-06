@@ -46,6 +46,17 @@ services:
       - postgres
       - redis
 
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "10011:80"
+    networks:
+      - betnetix
+
 networks:
   betnetix:
     driver: bridge
