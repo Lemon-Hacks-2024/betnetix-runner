@@ -93,12 +93,8 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 			if race.Results[i].Distance < trackLength {
 
 				// Применение случайного вырыва
-				if rand.Float64() < 0.1 { // 10% шанс на рывок
-					boost := 1 + (rand.Float64() * 0.2) // Рандомный буст от 1 до 1.2
-					currentSpeeds[i] += participant.MaxSpeed * boost
-					if currentSpeeds[i] > participant.MaxSpeed {
-						currentSpeeds[i] = participant.MaxSpeed
-					}
+				if rand.Float64() < 0.1 { // 10% шанс на вырыв
+					currentSpeeds[i] += participant.MaxSpeed * 0.2 // Увеличение скорости на 20% от максимальной
 				}
 
 				// Обновление скорости с учетом потери скорости
