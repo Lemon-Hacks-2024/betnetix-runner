@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import {onMounted} from 'vue';
-import Track from "@/widgets/raceStream/ui/Track.vue";
-// import { getColor } from "@/shared/utils";
-import {useWebSocket} from "../model/useWebSocket.ts";
-import {postWithGroupId} from "../model/apiRaceRun.ts";
+import { onMounted, inject, Ref } from "vue";
 
-const {group} = defineProps<{
-  group: Group;
-}>();
+import { useTexts } from "@/app/locale/model";
+import { Group } from "@/entities/groups";
+import { useWebSocket } from "../model/useWebSocket.ts";
+import { postWithGroupId } from "../model/apiRaceRun.ts";
+import AnimatedRunnerIcon from "./AnimatedRunnerIcon.vue";
 
-const groupId = "9545e380-91b5-47da-ba83-7bedf69739e1";
-const {state, raceDetails, raceFinished, connectWebSocket} = useWebSocket(group.id);
+const { $t } = useTexts();
+const group = inject<Ref<Group>>("dataGroup")!;
+
+// raceFinished
+const { state, raceDetails, connectWebSocket } = useWebSocket(group.value.id);
 
 onMounted(() => {
   connectWebSocket();
 });
 
 // функция для получения индекса игрока в массиве
-function getPlayerIndex(playerId) {
+const getPlayerIndex = (playerId: string) => {
   console.log(raceDetails);
   console.log(raceDetails.value.results);
   for (let i = 0; i < raceDetails.value.results.length; i++) {
@@ -26,19 +27,35 @@ function getPlayerIndex(playerId) {
       return i;
     }
   }
-}
+};
 
+const getState = (state: string): "run" | "stop" | "start" => {
+  switch (state) {
+    case "update":
+      return "run";
+    case "finish":
+      return "stop";
+  }
+  return "start";
+};
 </script>
 
 <template>
   <a-card :title="$t.main.raceBroadcast" :bordered="false">
     <template #extra>
-      <a-button type="primary" @click="postWithGroupId(group.id)">Run</a-button>
+      <Transition name="fade">
+        <a-button
+          v-if="group"
+          type="primary"
+          @click="postWithGroupId(group.id)"
+        >
+          {{ $t.main.startRace }}
+        </a-button>
+      </Transition>
     </template>
 
     <div class="chart">
       <div class="place-tracks">
-
         <div class="start">
           <span class="start__label">СТАРТ</span>
         </div>
@@ -46,40 +63,26 @@ function getPlayerIndex(playerId) {
           <span class="finish__label">ФИНИШ</span>
         </div>
 
-        <div
-            v-if="state === 'update' || state === 'finish'"
-            style="grid-area: tracks"
-            class="tracks"
-        >
-          <Track
-              v-for="player in group.players"
-              :key="player.id"
-              :color="player.color"
-              :position="raceDetails.results[getPlayerIndex(player.id)].distance"
-              :speed="raceDetails.results[getPlayerIndex(player.id)].current_speed"
+        <div style="grid-area: tracks" class="tracks">
+          <AnimatedRunnerIcon
+            v-for="player in group.players"
+            :key="player.id"
+            :color="player.color"
+            :position="
+              raceDetails?.results?.[getPlayerIndex(player.id)].distance ?? 0
+            "
+            :speed="
+              raceDetails?.results?.[getPlayerIndex(player.id)].current_speed ??
+              6
+            "
+            :name="player.name"
+            :state="getState(state)"
           />
         </div>
 
-        <div
-            v-if="state === 'countdown' || state === ''"
-            style="grid-area: tracks"
-            class="tracks"
-        >
-          <Track
-              v-for="player in group.players"
-              :key="player.id"
-              :color="player.color"
-              :position="0"
-          />
-        </div>
-
-        <div
-            v-if="state === 'countdown'"
-            class="countdown"
-        >
+        <div v-if="state === 'countdown'" class="countdown">
           <span>{{ raceDetails }}</span>
         </div>
-
       </div>
     </div>
   </a-card>
@@ -125,8 +128,7 @@ function getPlayerIndex(playerId) {
 .place-tracks {
   background-color: #f8fae5;
   display: grid;
-  grid-template-areas:
-        "start tracks finish";
+  grid-template-areas: "start tracks finish";
   grid-template-columns: 60px repeat(1, minmax(0, 1fr)) 60px;
 }
 
@@ -137,5 +139,4 @@ function getPlayerIndex(playerId) {
   display: flex;
   justify-content: center;
 }
-
 </style>

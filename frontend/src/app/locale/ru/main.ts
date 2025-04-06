@@ -18,4 +18,6 @@ export const TextsMain = {
   probabilityTop: "Вероятность топ 2 и топ 3",
   pairedProbability: "Парная вероятность",
   raceBroadcast: "Трансляция забега",
+  raceOver: "Забег окончен",
+  startRace: "Начать забег",
 };
