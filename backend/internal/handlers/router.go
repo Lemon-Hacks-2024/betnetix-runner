@@ -36,7 +36,7 @@ func (h *Handler) InitRoutes(port string) {
 	// 3 requests per 10 seconds max
 	app.Use(limiter.New(limiter.Config{
 		Expiration: 1 * time.Second,
-		Max:        10,
+		Max:        20,
 	}))
 
 	api := app.Group("/api-hack/v1")
