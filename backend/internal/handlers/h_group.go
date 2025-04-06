@@ -110,8 +110,8 @@ func (h *Handler) updateGroupPlayers(c *fiber.Ctx) error {
 	}
 
 	var input struct {
-		GroupName string          `json:"groupName"` // новое имя, если есть
-		Details   []entity.Player `json:"details"`   // список игроков
+		GroupName string          `json:"name"`    // новое имя, если есть
+		Details   []entity.Player `json:"details"` // список игроков
 	}
 
 	if err := c.BodyParser(&input); err != nil || len(input.Details) == 0 {
