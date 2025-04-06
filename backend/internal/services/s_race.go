@@ -101,7 +101,7 @@ func (s *RaceService) Simulate(group entity.Group) entity.Race {
 			RaceResult: entity.RaceResult{
 				PlayerId:     p.ID,
 				Distance:     int64(trackLength),
-				RaceTime:     int64(timeElapsed),
+				RaceTime:     timeElapsed,
 				FinishedAt:   startTime + int64(timeElapsed),
 				CurrentSpeed: int64(speed),
 			},

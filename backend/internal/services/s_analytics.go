@@ -42,7 +42,7 @@ func (a AnalyticsService) GetPlaceProbabilities(groupID string) ([]entity.PlaceP
 
 		var avgRaceTime float64
 		if len(results) > 0 {
-			var total int64
+			var total float64
 			for _, res := range results {
 				total += res.RaceTime
 			}
@@ -180,7 +180,7 @@ func (a AnalyticsService) GetTops2Probabilities(groupID string) ([]entity.Top2Pr
 
 		var avgRaceTime float64
 		if len(results) > 0 {
-			var total int64
+			var total float64
 			for _, res := range results {
 				total += res.RaceTime
 			}
@@ -269,7 +269,7 @@ func (a AnalyticsService) GetTop3Probabilities(groupID string) ([]entity.Top3Pro
 		results := playerResults[player.ID]
 		var avgRaceTime float64
 		if len(results) > 0 {
-			var total int64
+			var total float64
 			for _, res := range results {
 				total += res.RaceTime
 			}
@@ -359,7 +359,7 @@ func (a AnalyticsService) GetPairPlaceProbabilities(groupID string) ([][]entity.
 		results := playerResults[player.ID]
 		var avgRaceTime float64
 		if len(results) > 0 {
-			var total int64
+			var total float64
 			for _, res := range results {
 				total += res.RaceTime
 			}

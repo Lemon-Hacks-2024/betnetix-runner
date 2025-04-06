@@ -147,7 +147,7 @@ func (h *Handler) simulateRace(groupId string, raceId string, participants []ent
 			race.FinishedAt = time.Now().UTC().Unix()
 
 			for i := range race.Results {
-				race.Results[i].RaceTime = race.Results[i].FinishedAt - race.StartedAt
+				race.Results[i].RaceTime = float64(race.Results[i].FinishedAt-race.StartedAt) / 1000
 				race.Results[i].FinishedAt = race.Results[i].FinishedAt / 1000
 			}
 
