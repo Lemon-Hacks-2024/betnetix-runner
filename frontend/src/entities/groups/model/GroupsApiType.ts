@@ -10,6 +10,7 @@ export interface UpdateGroupRequest extends CreateGroupRequest {
   id: string;
 }
 
+
 export interface AnalyticsPlace {
   player_id: string;
   places_probability: number[];
@@ -25,4 +26,9 @@ export type AnalyticsPairs = AnalyticsPairsItem[][];
 export interface AnalyticsPairsItem {
   id: string;
   chance: number;
+
+export interface GenerateRacesRequest {
+  groupId: string;
+  quantity: number;
+
 }

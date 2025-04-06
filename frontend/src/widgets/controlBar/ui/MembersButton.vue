@@ -4,6 +4,8 @@ import { useTexts } from "@/app/locale/model";
 import { BaseNeumorphic } from "@/shared/ui";
 import CreateGroup from "@/widgets/createGroup";
 
+defineProps<{ groupId: string | undefined }>();
+
 const { $t } = useTexts();
 const modalVisible = ref<boolean>(false);
 
@@ -15,7 +17,7 @@ const openModal = () => (modalVisible.value = true);
     <a-button class="members-button" type="primary" @click="openModal">
       <span class="btn-text">{{ $t.buttons.members }}</span>
     </a-button>
-    <CreateGroup v-model:open="modalVisible" />
+    <CreateGroup v-model:open="modalVisible" :groupId="groupId" />
   </BaseNeumorphic>
 </template>
 

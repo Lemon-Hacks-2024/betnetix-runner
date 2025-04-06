@@ -1,13 +1,21 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import MembersButton from "./MembersButton.vue";
 import RaceGeneratorInput from "./RaceGeneratorInput.vue";
+
+const route = useRoute();
+
+const currentGroupId = computed(() =>
+  typeof route.params.groupId === "string" ? route.params.groupId : undefined
+);
 </script>
 
 <template>
   <a-card class="control-bar-wrapper">
     <a-flex justify="space-between" align="center">
-      <RaceGeneratorInput />
-      <MembersButton />
+      <RaceGeneratorInput :groupId="currentGroupId" />
+      <MembersButton :groupId="currentGroupId" />
     </a-flex>
   </a-card>
 </template>
