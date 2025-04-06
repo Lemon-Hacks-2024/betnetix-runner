@@ -48,7 +48,6 @@ export const updateGroup = async (
   );
 };
 
-
 export const getAnalyticsPlaces = async (
   id: string
 ): Promise<ApiTypes.AnalyticsPlace[]> => {
@@ -87,6 +86,7 @@ export const getAnalyticsPairs = async (
   );
 
   return res.data.details ?? [];
+};
 
 export const generateRaces = async (
   data: ApiTypes.GenerateRacesRequest
@@ -99,5 +99,4 @@ export const generateRaces = async (
   } catch (error) {
     return Promise.reject(error);
   }
-
 };
