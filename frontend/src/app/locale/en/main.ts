@@ -8,4 +8,5 @@ export const TextsMain = {
   reactionTimeOnStart: "Reaction time at start. In seconds, range 0.1–0.3",
   startingPhase: "Start phase of the race. Recommended values from 8 to 12 m/s",
   coffOnFinalPhase: "Speed loss coefficient at final stage. Recommended: 1–5%",
+  raceBroadcast: "Race broadcast"
 };
