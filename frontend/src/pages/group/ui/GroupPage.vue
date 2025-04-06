@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 
 import { useGroupsStore, Group } from "@/entities/groups";
 import StatisticsGroup from "@/widgets/statisticsGroup";
+import PredictionOutcomes from "@/widgets/predictionOutcomes";
 import Skeleton from "./Skeleton.vue";
 import ControlBar from "@/widgets/controlBar";
 
@@ -50,6 +51,7 @@ watch(
 
       <a-flex v-else vertical :gap="30">
         <ControlBar />
+        <PredictionOutcomes />
         <StatisticsGroup />
       </a-flex>
     </Transition>

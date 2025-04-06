@@ -35,6 +35,20 @@ export const useGroupsStore = defineStore("groups", () => {
     api.updateGroup
   );
 
+  const { loading: loadingAnalyticsPlaces, execute: fetchAnalyticsPlaces } =
+    useApi(api.getAnalyticsPlaces);
+
+  const { loading: loadingAnalyticsTop2, execute: fetchAnalyticsTop2 } = useApi(
+    api.getAnalyticsTop2
+  );
+
+  const { loading: loadingAnalyticsTop3, execute: fetchAnalyticsTop3 } = useApi(
+    api.getAnalyticsTop3
+  );
+
+  const { loading: loadingAnalyticsPairs, execute: fetchAnalyticsPairs } =
+    useApi(api.getAnalyticsPairs);
+
   const { loading: loadingGenerateRaces, execute: fetchGenerateRaces } = useApi(
     api.generateRaces
   );
@@ -46,6 +60,10 @@ export const useGroupsStore = defineStore("groups", () => {
     loadingCreateGroups,
     loadingGetGroup,
     loadingUpdateGroup,
+    loadingAnalyticsPlaces,
+    loadingAnalyticsTop2,
+    loadingAnalyticsTop3,
+    loadingAnalyticsPairs,
     loadingGenerateRaces,
 
     // actions
@@ -54,6 +72,10 @@ export const useGroupsStore = defineStore("groups", () => {
     fetchCreateGroups,
     fetchGetGroup,
     fetchUpdateGroup,
+    fetchAnalyticsPlaces,
+    fetchAnalyticsTop2,
+    fetchAnalyticsTop3,
+    fetchAnalyticsPairs,
     fetchGenerateRaces,
   };
 });

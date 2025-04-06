@@ -48,6 +48,46 @@ export const updateGroup = async (
   );
 };
 
+
+export const getAnalyticsPlaces = async (
+  id: string
+): Promise<ApiTypes.AnalyticsPlace[]> => {
+  const res = await api.get<ApiResponse<ApiTypes.AnalyticsPlace[]>>(
+    `groups/${id}/analytics/places`
+  );
+
+  return res.data.details ?? [];
+};
+
+export const getAnalyticsTop2 = async (
+  id: string
+): Promise<ApiTypes.AnalyticsTop[]> => {
+  const res = await api.get<ApiResponse<ApiTypes.AnalyticsTop[]>>(
+    `groups/${id}/analytics/top2`
+  );
+
+  return res.data.details ?? [];
+};
+
+export const getAnalyticsTop3 = async (
+  id: string
+): Promise<ApiTypes.AnalyticsTop[]> => {
+  const res = await api.get<ApiResponse<ApiTypes.AnalyticsTop[]>>(
+    `groups/${id}/analytics/top3`
+  );
+
+  return res.data.details ?? [];
+};
+
+export const getAnalyticsPairs = async (
+  id: string
+): Promise<ApiTypes.AnalyticsPairs> => {
+  const res = await api.get<ApiResponse<ApiTypes.AnalyticsPairs>>(
+    `groups/${id}/analytics/pairs`
+  );
+
+  return res.data.details ?? [];
+
 export const generateRaces = async (
   data: ApiTypes.GenerateRacesRequest
 ): Promise<RacesModel> => {
@@ -59,4 +99,5 @@ export const generateRaces = async (
   } catch (error) {
     return Promise.reject(error);
   }
+
 };

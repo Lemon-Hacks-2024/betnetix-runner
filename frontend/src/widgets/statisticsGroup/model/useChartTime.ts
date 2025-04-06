@@ -37,16 +37,16 @@ export const useChartTime = () => {
     );
   });
 
-  const chartData = computed<ChartData<"bar">>(() => {
+  const chartData = computed<ChartData<"line">>(() => {
     return {
       labels: labels.value,
       datasets: datasets.value,
     };
   });
 
-  // Object.assign(options.scales!.y!.ticks!, {
-  //   stepSize: 1,
-  // });
+  Object.assign(options.scales!.y!.ticks!, {
+    stepSize: 1,
+  });
 
   return { options, chartData };
 };

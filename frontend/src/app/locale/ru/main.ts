@@ -12,5 +12,12 @@ export const TextsMain = {
   statisticRaces: "Статистика забегов",
   chartPosition: "График по местам",
   chartTime: "График по времени",
+<<<<<<< HEAD
   advancedSettings: "Расширенные настройки",
+=======
+  predictionOutcomes: "Прогноз исходов",
+  probabilityLocation: "Вероятность по местам",
+  probabilityTop: "Вероятность топ 2 и топ 3",
+  pairedProbability: "Парная вероятность",
+>>>>>>> front-anton
 };
