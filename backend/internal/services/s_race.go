@@ -50,9 +50,6 @@ func (s *RaceService) CreateRace(race entity.Race) (string, error) {
 
 func (s *RaceService) SetResults(race entity.Race) (string, error) {
 	s.log.Debug().Msgf("race results: %v", race)
-	for i := range race.Results {
-		race.Results[i].RaceTime = race.Results[i].FinishedAt - race.StartedAt
-	}
 	raceId, err := s.storage.Race.SetResults(race)
 	if err != nil {
 		s.log.Error().Msgf("error setting race results: %v", err)
