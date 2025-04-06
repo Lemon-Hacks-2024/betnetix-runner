@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, inject, Ref } from "vue";
+import { ref, onMounted, inject, Ref, watchEffect, computed } from "vue";
 
 import { useTexts } from "@/app/locale/model";
 import { Group } from "@/entities/groups";
@@ -10,15 +10,16 @@ import AnimatedRunnerIcon from "./AnimatedRunnerIcon.vue";
 const { $t } = useTexts();
 const group = inject<Ref<Group>>("dataGroup")!;
 
-// raceFinished
-const { state, raceDetails, connectWebSocket } = useWebSocket(group.value.id);
+const { state, raceDetails, raceFinished, connectWebSocket } = useWebSocket(
+  group.value.id
+);
 
 onMounted(() => {
   connectWebSocket();
 });
 
 // функция для получения индекса игрока в массиве
-const getPlayerIndex = (playerId: string) => {
+const getPlayerIndex = (playerId: string): number => {
   console.log(raceDetails);
   console.log(raceDetails.value.results);
   for (let i = 0; i < raceDetails.value.results.length; i++) {
@@ -27,17 +28,32 @@ const getPlayerIndex = (playerId: string) => {
       return i;
     }
   }
+  return -1;
 };
 
-const getState = (state: string): "run" | "stop" | "start" => {
-  switch (state) {
-    case "update":
-      return "run";
-    case "finish":
-      return "stop";
-  }
+const getState = (
+  state: string,
+  position: number
+): "run" | "stop" | "start" => {
+  console.log(state, position);
+
+  if (position >= 100) return "stop";
+  if (state == "update") return "run";
+  if (state == "finish" && position < 100) return "run";
+
   return "start";
 };
+
+const getPosition = (playerId: string): number => {
+  return raceDetails.value?.results?.[getPlayerIndex(playerId)].distance ?? 0;
+};
+
+const disabled = ref(false);
+watchEffect(() => {
+  if (raceFinished.value) {
+    disabled.value = false;
+  }
+});
 </script>
 
 <template>
@@ -47,7 +63,11 @@ const getState = (state: string): "run" | "stop" | "start" => {
         <a-button
           v-if="group"
           type="primary"
-          @click="postWithGroupId(group.id)"
+          :disabled="disabled"
+          @click="
+            disabled = true;
+            postWithGroupId(group.id);
+          "
         >
           {{ $t.main.startRace }}
         </a-button>
@@ -68,15 +88,13 @@ const getState = (state: string): "run" | "stop" | "start" => {
             v-for="player in group.players"
             :key="player.id"
             :color="player.color"
-            :position="
-              raceDetails?.results?.[getPlayerIndex(player.id)].distance ?? 0
-            "
+            :position="getPosition(player.id)"
             :speed="
               raceDetails?.results?.[getPlayerIndex(player.id)].current_speed ??
               6
             "
             :name="player.name"
-            :state="getState(state)"
+            :state="getState(state, getPosition(player.id))"
           />
         </div>
 
@@ -90,6 +108,12 @@ const getState = (state: string): "run" | "stop" | "start" => {
 
 <style scoped lang="scss">
 .start {
+  position: absolute;
+  height: 100%;
+  width: 60px;
+  top: 0;
+  left: 0;
+  z-index: 1;
   grid-area: start;
   display: flex;
   align-items: center;
@@ -104,6 +128,12 @@ const getState = (state: string): "run" | "stop" | "start" => {
 }
 
 .finish {
+  position: absolute;
+  height: 100%;
+  width: 60px;
+  top: 0;
+  right: 0;
+  z-index: 1;
   grid-area: finish;
   display: flex;
   align-items: center;
@@ -119,24 +149,35 @@ const getState = (state: string): "run" | "stop" | "start" => {
 
 .tracks {
   grid-area: start;
-  display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
 }
 
 .place-tracks {
+  position: relative;
   background-color: #f8fae5;
-  display: grid;
   grid-template-areas: "start tracks finish";
   grid-template-columns: 60px repeat(1, minmax(0, 1fr)) 60px;
+  border-radius: 16px;
 }
 
 .countdown {
   width: 100%;
   font-size: 200px;
   position: absolute;
+  top: 0;
   display: flex;
   justify-content: center;
+}
+
+[data-color-scheme="dark"] {
+  .start,
+  .finish {
+    background-color: #292929;
+  }
+  .place-tracks {
+    background-color: #505050;
+  }
 }
 </style>
