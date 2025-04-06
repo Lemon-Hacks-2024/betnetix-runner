@@ -1,0 +1,10 @@
+.custom-theme {
+  .ant-btn-primary,
+  .ant-btn-default {
+    box-shadow: none;
+  }
+
+  .anticon svg {
+    vertical-align: baseline;
+  }
+}
