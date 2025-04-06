@@ -2,13 +2,19 @@ import { computed, inject, Ref } from "vue";
 import { ChartData } from "chart.js";
 import { useChart, getLabelsDate } from "@/shared/charts";
 import { Group } from "@/entities/groups";
+import { usePreferencesStore } from "@/entities/preferences";
+import { storeToRefs } from "pinia";
 
 export const useChartTime = () => {
+  const { language } = storeToRefs(usePreferencesStore());
+
   const { options, defaultDataset } = useChart("line");
   const dataGroup = inject<Ref<Group | null>>("dataGroup");
 
   const labels = computed(() => {
-    return getLabelsDate(dataGroup?.value?.races ?? []);
+    if (language.value === "ru")
+      return getLabelsDate(dataGroup?.value?.races ?? []);
+    else return getLabelsDate(dataGroup?.value?.races ?? []);
   });
 
   const datasets = computed(() => {
@@ -31,16 +37,16 @@ export const useChartTime = () => {
     );
   });
 
-  const chartData = computed<ChartData<"bar">>(() => {
+  const chartData = computed<ChartData<"line">>(() => {
     return {
       labels: labels.value,
       datasets: datasets.value,
     };
   });
 
-  // Object.assign(options.scales!.y!.ticks!, {
-  //   stepSize: 1,
-  // });
+  Object.assign(options.scales!.y!.ticks!, {
+    stepSize: 1,
+  });
 
   return { options, chartData };
 };

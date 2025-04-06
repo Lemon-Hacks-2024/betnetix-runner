@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { Line } from "vue-chartjs";
 import { TypeOptions } from "@/shared/types";
+import { useTexts } from "@/app/locale/model";
 
 import { useChartPlaces } from "../model/useChartPlaces";
 
 const chartPlaces = useChartPlaces();
 const { options } = chartPlaces as { options: TypeOptions<"line"> };
 const { chartData } = chartPlaces;
+const { $t } = useTexts();
 </script>
 
 <template>
