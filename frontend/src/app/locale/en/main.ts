@@ -16,4 +16,5 @@ export const TextsMain = {
   probabilityLocation: "Probability by location",
   probabilityTop: "Probability of top 2 and top 3",
   pairedProbability: "Paired probability",
+  raceBroadcast: "Race broadcast",
 };
