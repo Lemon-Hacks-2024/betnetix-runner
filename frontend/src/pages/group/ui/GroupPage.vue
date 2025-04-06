@@ -8,6 +8,7 @@ import { useGroupsStore, Group } from "@/entities/groups";
 import StatisticsGroup from "@/widgets/statisticsGroup";
 import PredictionOutcomes from "@/widgets/predictionOutcomes";
 import Skeleton from "./Skeleton.vue";
+import ControlBar from "@/widgets/controlBar";
 import RaceStream from "@/widgets/raceStream";
 
 const route = useRoute();
@@ -20,19 +21,25 @@ const { loadingGetGroup } = storeToRefs(groupsStore);
 const dataGroup = ref<Group | null>(null);
 provide("dataGroup", dataGroup);
 
+const loadGroup = async (groupId: string) => {
+  try {
+    const group = await fetchGetGroup(groupId);
+    dataGroup.value = group;
+    document.title = group!.name + " | Lemon";
+  } catch (e) {
+    const err = e as AxiosError;
+    if (err.status === 404) {
+      router.replace("/");
+    }
+  }
+};
+
+provide("reloadGroup", loadGroup);
+
 watch(
   () => route.params.groupId,
-  async (groupId) => {
-    try {
-      dataGroup.value = await fetchGetGroup(groupId as string);
-
-      document.title = dataGroup.value!.name + " | Lemon";
-    } catch (e) {
-      const err = e as AxiosError;
-      if (err.status === 404) {
-        router.replace("/");
-      }
-    }
+  (groupId) => {
+    if (groupId) loadGroup(groupId as string);
   },
   { immediate: true }
 );
@@ -44,6 +51,7 @@ watch(
       <Skeleton v-if="loadingGetGroup" />
 
       <a-flex v-else-if="dataGroup" vertical :gap="30">
+        <ControlBar />
         <PredictionOutcomes />
         <RaceStream />
         <StatisticsGroup />

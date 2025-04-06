@@ -20,13 +20,13 @@ const { $t } = useTexts();
   cursor: not-allowed;
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  gap: 10px;
+  gap: 4px;
   height: fit-content;
   padding: 8px 25px;
   color: rgba(var(--text-color-rgb), 0.5);
   border-radius: 12px;
-  // background-color: transparent;
   user-select: none;
 
   .btn-text {
@@ -35,8 +35,8 @@ const { $t } = useTexts();
   }
 
   svg {
-    max-width: 18px;
-    max-height: 18px;
+    max-width: 16px;
+    max-height: 16px;
     fill: rgba($color: #000000, $alpha: 0.2);
   }
 }

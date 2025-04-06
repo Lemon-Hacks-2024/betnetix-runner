@@ -4,4 +4,6 @@ export const TextsButtons = {
   entrance: "Вход",
   main: "Главная",
   placeholder: "Страница",
+  members: "Участники",
+  generate: "Сгенерировать",
 };

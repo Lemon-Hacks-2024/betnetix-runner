@@ -19,7 +19,7 @@ export const useCssVarsFromToken = () => {
     );
     root.style.setProperty(
       "--opacity-element-color",
-      isDark.value ? "#0F1316CC" : "#F2F4F6CC"
+      isDark.value ? "#3F3F3FB3" : "#FEFFF1B3"
     );
     root.style.setProperty("--accent-color", t.colorInfo);
     root.style.setProperty("--text-color", t.colorTextBase);

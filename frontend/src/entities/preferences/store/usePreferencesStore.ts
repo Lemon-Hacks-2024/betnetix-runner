@@ -1,4 +1,4 @@
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, WatchStopHandle } from "vue";
 import { defineStore } from "pinia";
 
 import { theme } from "ant-design-vue";
@@ -13,6 +13,10 @@ export const usePreferencesStore = defineStore("theme", () => {
   // ========== ТЕМА ==========
   const isDark = ref<boolean>(false);
 
+  const userHasChosenTheme = computed(() => {
+    return !!getStorageTheme();
+  });
+
   const setTheme = (val: boolean) => {
     isDark.value = val;
     const themeValue: ThemeType = val ? "dark" : "light";
@@ -23,16 +27,20 @@ export const usePreferencesStore = defineStore("theme", () => {
   const toggleTheme = () => setTheme(!isDark.value);
 
   const initTheme = () => {
+    const { system } = useColorMode();
     const stored = getStorageTheme();
-    if (stored === "dark" || stored === "light") {
-      setTheme(stored === "dark");
+
+    if (stored) {
+      isDark.value = stored === "dark";
+      setTheme(isDark.value);
     } else {
-      const { system } = useColorMode();
-      const stop = watch(
-        system,
+      let stop: WatchStopHandle;
+
+      stop = watch(
+        () => system.value,
         (val) => {
-          setTheme(val === "dark");
-          stop(); // больше не следим
+          isDark.value = val === "dark";
+          if (userHasChosenTheme.value && stop) stop();
         },
         { immediate: true }
       );

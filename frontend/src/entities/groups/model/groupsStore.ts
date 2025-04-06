@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { useApi } from "@/shared/api";
 
+// import * as ApiTypes from "./GroupsApiType";
 import * as api from "./groupsApi";
 
 export const useGroupsStore = defineStore("groups", () => {
@@ -48,6 +49,10 @@ export const useGroupsStore = defineStore("groups", () => {
   const { loading: loadingAnalyticsPairs, execute: fetchAnalyticsPairs } =
     useApi(api.getAnalyticsPairs);
 
+  const { loading: loadingGenerateRaces, execute: fetchGenerateRaces } = useApi(
+    api.generateRaces
+  );
+
   return {
     // loading
     loadingRandomPlayers,
@@ -59,6 +64,7 @@ export const useGroupsStore = defineStore("groups", () => {
     loadingAnalyticsTop2,
     loadingAnalyticsTop3,
     loadingAnalyticsPairs,
+    loadingGenerateRaces,
 
     // actions
     fetchRandomPlayers,
@@ -70,5 +76,6 @@ export const useGroupsStore = defineStore("groups", () => {
     fetchAnalyticsTop2,
     fetchAnalyticsTop3,
     fetchAnalyticsPairs,
+    fetchGenerateRaces,
   };
 });

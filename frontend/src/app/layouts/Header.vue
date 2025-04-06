@@ -34,21 +34,22 @@ import {
   right: 70px;
   border: none;
   border-radius: 80px;
-  border-top-right-radius: 40px;
-  border-bottom-right-radius: 40px;
+  border-top-right-radius: 30px;
+  border-bottom-right-radius: 30px;
   box-shadow: 0 4px 10px var(--shadow-dark);
   backdrop-filter: blur(10px);
   z-index: 1000;
 
   .header-content-wrapper {
+    background-color: var(--opacity-element-color);
     border-radius: 80px;
-    border-top-right-radius: 40px;
-    border-bottom-right-radius: 40px;
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
   }
 
   .divider {
     width: 2px;
-    height: 40px;
+    height: 30px;
     border-radius: 2px;
     background-color: rgba($color: #000000, $alpha: 0.2);
   }

@@ -26,3 +26,8 @@ export interface AnalyticsPairsItem {
   id: string;
   chance: number;
 }
+
+export interface GenerateRacesRequest {
+  groupId: string;
+  quantity: number;
+}
