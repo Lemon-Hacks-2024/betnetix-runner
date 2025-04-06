@@ -3,6 +3,7 @@ package storages
 import (
 	"backend-service/internal/entity"
 	"backend-service/pkg/database"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"time"
@@ -47,7 +48,7 @@ func (s *RaceStorage) GetAllByGroupID(groupID string) ([]entity.Race, error) {
 	query := `
 		SELECT id, group_id, results, started_at, finished_at
 		FROM races
-		WHERE group_id = $1 AND finished_at IS NOT NULL
+		WHERE group_id = $1 
 		ORDER BY started_at ASC
 	`
 
@@ -63,6 +64,7 @@ func (s *RaceStorage) GetAllByGroupID(groupID string) ([]entity.Race, error) {
 		var (
 			race        entity.Race
 			resultsJSON []byte
+			finishedAt  sql.NullInt64
 		)
 
 		if err := rows.Scan(
@@ -70,13 +72,19 @@ func (s *RaceStorage) GetAllByGroupID(groupID string) ([]entity.Race, error) {
 			&race.GroupId,
 			&resultsJSON,
 			&race.StartedAt,
-			&race.FinishedAt,
+			&finishedAt,
 		); err != nil {
 			return nil, fmt.Errorf("failed to scan race row: %w", err)
 		}
 
 		if err := json.Unmarshal(resultsJSON, &race.Results); err != nil {
 			return nil, fmt.Errorf("failed to unmarshal race results: %w", err)
+		}
+
+		if finishedAt.Valid {
+			race.FinishedAt = finishedAt.Int64
+		} else {
+			race.FinishedAt = 0 // подставляем 0, если null
 		}
 
 		races = append(races, race)
